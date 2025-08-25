@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AuthService from '../services/authService';
 
 interface RegisterPageProps {
   onBack: () => void;
@@ -8,19 +7,20 @@ interface RegisterPageProps {
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     email: '',
     suburb: '',
     state: '',
     postcode: '',
-    businessName: ''
+    company: '',
+    abn: '',
+    website: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  
-  const authService = new AuthService('wordpress'); // or 'hubspot'
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -34,18 +34,32 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
     setLoading(true);
     setError('');
 
-    const result = await authService.register(formData);
-    
-    if (result.success) {
-      setSuccess(true);
-      setTimeout(() => {
-        onRegisterSuccess?.();
-        onBack();
-      }, 2000);
-    } else {
-      setError(result.error || 'Registration failed');
+    try {
+      const response = await fetch(
+        'https://affiliate.propertyinvestors.com.au/wp-json/hubspot-api/v1/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          onRegisterSuccess?.();
+          onBack();
+        }, 2000);
+      } else {
+        setError(result?.message || result?.error || 'Registration failed');
+      }
+    } catch (err) {
+      console.error('API error:', err);
+      setError('Something went wrong. Please try again.');
     }
-    
+
     setLoading(false);
   };
 
@@ -61,6 +75,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
           </button>
           <h1 className="text-2xl font-bold">Register</h1>
         </div>
+
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
@@ -74,16 +89,28 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Name"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-            disabled={loading}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder="First Name"
+              className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+              disabled={loading}
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
+              className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+              disabled={loading}
+            />
+          </div>
 
           <input
             type="tel"
@@ -142,10 +169,32 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
 
           <input
             type="text"
-            name="businessName"
-            value={formData.businessName}
+            name="company"
+            value={formData.company}
             onChange={handleChange}
-            placeholder="Business Name"
+            placeholder="Company"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+            disabled={loading}
+          />
+
+          <input
+            type="text"
+            name="abn"
+            value={formData.abn}
+            onChange={handleChange}
+            placeholder="ABN"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+            disabled={loading}
+          />
+
+          <input
+            type="url"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            placeholder="Website URL (https://...)"
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
             disabled={loading}

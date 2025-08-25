@@ -22,7 +22,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 pt-16">
+      <div className="bg-[#efefef] flex-1 pt-16">
         <Navigation
           currentPage={currentPage}
           onNavigate={setCurrentPage}

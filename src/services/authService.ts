@@ -22,7 +22,6 @@ class AuthService extends BaseAPI {
         return { success: false, error: result.message || 'Failed to send code' };
       }
 
-      // Step 1 success — only email known at this point
       return { success: true, data: { email } as User };
     } catch {
       return { success: false, error: 'Network error' };
@@ -45,7 +44,6 @@ class AuthService extends BaseAPI {
       console.log('Sending verification payload:', { code, email });
       console.log('Verify result:', result);
 
-      // Check the data object instead of top-level token/user
       if (result.success && result.data?.token) {
         localStorage.setItem('authToken', result.data.token);
         this.saveCurrentUser(result.data);
@@ -58,7 +56,6 @@ class AuthService extends BaseAPI {
       return { success: false, error: 'Network error' };
     }
   }
-
 
   /** HubSpot login (Step 1 only) */
   private async hubspotLogin(data: LoginData): Promise<ApiResponse<User>> {
@@ -73,7 +70,7 @@ class AuthService extends BaseAPI {
     return this.hubspotLogin(data);
   }
 
-  /** WordPress login — unchanged except Content-Type header */
+  /** WordPress login */
   private async wordpressLogin(data: LoginData): Promise<ApiResponse<User>> {
     try {
       const response = await this.makeRequest(
@@ -106,6 +103,36 @@ class AuthService extends BaseAPI {
       return { success: false, error: 'Network error' };
     }
   }
+
+ /** REGISTER new user */
+async register(data: Record<string, any>): Promise<ApiResponse<User>> {
+  try {
+    const response = await this.makeRequest(
+      `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/register`, // 👈 your URL
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data), // send ALL fields
+      }
+    );
+
+    const result = await response.json();
+    console.log('Register result:', result);
+
+    if (result.success && result.data) {
+      if (result.data.token) {
+        localStorage.setItem('authToken', result.data.token);
+      }
+      this.saveCurrentUser(result.data);
+      return { success: true, data: result.data };
+    }
+
+    return { success: false, error: result.message || 'Registration failed' };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: 'Network error' };
+  }
+}
 
   /** Storage helpers */
   logout(): void {

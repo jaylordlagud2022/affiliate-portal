@@ -3,12 +3,10 @@ import DataTable from "react-data-table-component";
 
 const DashboardBoxes = () => {
   const [data, setData] = useState([
-    { title: "Earnings (Lifetime)", value: "" },
+    { title: "Earnings", value: "" },
     { title: "New leads", value: "" },
     { title: "Current Pipeline", value: "" },
     { title: "Commissions Due", value: "" },
-    { title: "Marketing", value: "" },
-    { title: "Messaging", value: "" },
   ]);
 
   const [leads, setLeads] = useState<any[]>([]);
@@ -49,12 +47,10 @@ const DashboardBoxes = () => {
         const totalCommission = (commData.data?.length ?? 0) * 5000;
 
         setData([
-          { title: "Earnings (Lifetime)", value: "$0" },
+          { title: "Earnings", value: "$0" },
           { title: "New leads", value: leadsData.data?.length ?? 0 },
           { title: "Current Pipeline", value: pipelineData.data?.length ?? 0 },
           { title: "Commissions Due", value: `$${totalCommission}` },
-          { title: "Marketing", value: "" },
-          { title: "Messaging", value: "" },
         ]);
       } catch (err) {
         console.error("Error fetching data", err);
@@ -136,27 +132,28 @@ const DashboardBoxes = () => {
 
   return (
     <div className="p-4">
-      {/* Dashboard Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {data.map((box, index) => (
-          <div
-            key={index}
-            className="bg-[#d02c37] text-white p-8 rounded-lg shadow-md cursor-pointer"
-            onClick={() => {
-              if (box.title === "New leads") openModal("leads");
-              if (box.title === "Current Pipeline") openModal("pipeline");
-              if (box.title === "Commissions Due") openModal("commissions");
-            }}
-          >
-            <div className="text-xl font-bold text-white mb-2">{box.title}</div>
-            {loading ? (
-              <div className="text-lg font-medium">Loading...</div>
-            ) : (
-              <div className="text-3xl font-extrabold">{box.value}</div>
-            )}
-          </div>
-        ))}
-      </div>
+    {/* Dashboard Boxes */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+      {data.map((box, index) => (
+        <div
+          key={index}
+          className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+          onClick={() => {
+            if (box.title === "New leads") openModal("leads");
+            if (box.title === "Current Pipeline") openModal("pipeline");
+            if (box.title === "Commissions Due") openModal("commissions");
+          }}
+        >
+          <div className="text-2xl font-bold text-white mb-4">{box.title}</div>
+          {loading ? (
+            <div className="text-xl font-medium">Loading...</div>
+          ) : (
+            <div className="text-5xl font-extrabold">{box.value}</div>
+          )}
+        </div>
+      ))}
+    </div>
+
 
       {/* Modal */}
       {isModalOpen && (
