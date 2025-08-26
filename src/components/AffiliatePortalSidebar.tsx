@@ -34,16 +34,16 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
   }, []);
 
   return (
-    <div className="w-64 bg-[#efefef] border-r border-gray-200 min-h-screen relative">
+    <div className="w-64 bg-white border-r border-gray-200 min-h-screen relative">
       {/* Logo */}
-      <div className="p-6 border-gray-200">
+      <div className="p-6 bg-white">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg"></span>
           </div>
         </div>
       </div>
-      <div className="p-6 border-gray-200">
+      <div className="p-6 bg-white">
         <div className="flex items-center space-x-3">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Affiliate Portal</h1>
@@ -57,11 +57,13 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-              currentPage === item.id
-                ? 'bg-red-50 text-red-700 border-l-4 border-red-600'
-                : 'text-gray-700 hover:bg-gray-50 hover:text-red-600'
-            }`}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+              ${
+                currentPage === item.id
+                  ? 'bg-[#d02c37] text-white'
+                  : 'text-gray-700 hover:bg-black hover:text-white'
+              }
+            `}
           >
             <span className="font-medium">{item.label}</span>
           </button>
@@ -72,7 +74,7 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
       <nav className="p-4 space-y-2">
         <button
           onClick={onLogout}
-          className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50 hover:text-red-600`}
+          className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-black hover:text-white"
         >
           <span className="font-medium">Logout</span>
         </button>

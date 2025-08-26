@@ -4,7 +4,7 @@ import RegisterPage from './RegisterPage';
 import Dashboard from './Dashboard';
 
 const AffiliatePortal: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'login' | 'register' | 'dashboard'>('home');
+  const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard'>('login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
@@ -14,53 +14,30 @@ const AffiliatePortal: React.FC = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentPage('home');
+    setCurrentPage('login');
   };
 
-  const goBack = () => {
-    setCurrentPage('home');
+  const goToRegister = () => {
+    setCurrentPage('register');
+  };
+
+  const goBackToLogin = () => {
+    setCurrentPage('login');
   };
 
   if (currentPage === 'login') {
-    return <LoginPage onLogin={handleLogin} onBack={goBack} />;
+    return <LoginPage onLogin={handleLogin} onRegister={goToRegister} />;
   }
 
   if (currentPage === 'register') {
-    return <RegisterPage onBack={goBack} />;
+    return <RegisterPage onBack={goBackToLogin} />;
   }
 
   if (currentPage === 'dashboard' && isLoggedIn) {
     return <Dashboard onLogout={handleLogout} />;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8">
-        <div className="flex items-center mb-6">
-          {/* Left Section - Portal Access */}
-          <div className="bg-white p-8 rounded-lg shadow-sm">
-            <h1 className="text-2xl font-bold text-center mb-8">
-              AFFILIATE PORTAL<br />ACCESS
-            </h1>
-            <div className="space-y-4">
-              <button
-                onClick={() => setCurrentPage('login')}
-                className="w-full py-4 px-6 border-2 border-gray-300 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
-              >
-                I AM AN AFFILIATE<br />LOG IN
-              </button>
-              <button
-                onClick={() => setCurrentPage('register')}
-                className="w-full py-4 px-6 border-2 border-gray-300 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
-              >
-                I AM NOT AN AFFILIATE<br />REGISTER
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default AffiliatePortal;
