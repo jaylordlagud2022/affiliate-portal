@@ -8,7 +8,6 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     allowedHosts: [
-      'eb7b4da7ea19.ngrok-free.app', // allow your ngrok URL
       'localhost'
     ]
   },

@@ -7,7 +7,7 @@ const HubspotChat: React.FC = () => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
-    fetch(`http://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`)
+    fetch(`http://52.64.155.40/wp-json/hubspot-login/v1/user-info?token=${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data && data.data.hubspot) {

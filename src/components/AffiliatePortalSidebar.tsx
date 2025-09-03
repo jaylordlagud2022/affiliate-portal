@@ -1,85 +1,66 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-type PageType = 'portal' | 'marketing' | 'dashboard' | 'account' | 'affiliate';
+type PageType = 'portal' | 'account' | 'marketing' | 'dashboard' | 'affiliate' | 'affiliateActivity';
 
 interface AffiliatePortalSidebarProps {
   currentPage: PageType;
   onNavigate: (page: PageType) => void;
   onLogout: () => void;
+  isOpen: boolean;
 }
 
 const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
   currentPage,
   onNavigate,
   onLogout,
+  isOpen,
 }) => {
   const menuItems: { id: PageType; label: string }[] = [
-    { id: 'portal', label: 'Portal' },
-    { id: 'marketing', label: 'Marketing' },
-    { id: 'dashboard', label: 'Overview' },
-    { id: 'account', label: 'Account' },
+    { id: 'portal', label: 'Dashboard Hub' },
+    { id: 'marketing', label: 'Marketing Hub' },
+    { id: 'affiliateActivity', label: 'Partner Status Hub' },
+    { id: 'account', label: 'Account Hub' },
+
   ];
 
-  useEffect(() => {
-    // Inject HubSpot chat embed only once
-    if (!document.getElementById('hs-script-loader')) {
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.id = 'hs-script-loader';
-      script.async = true;
-      script.defer = true;
-      script.src = '//js.hs-scripts.com/46099113.js'; // Replace with your HubSpot ID
-      document.body.appendChild(script);
-    }
-  }, []);
-
   return (
-    <div className="w-64 bg-white border-r border-gray-200 min-h-screen relative">
-      {/* Logo */}
-      <div className="p-6 bg-white">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg"></span>
-          </div>
-        </div>
-      </div>
-      <div className="p-6 bg-white">
-        <div className="flex items-center space-x-3">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Affiliate Portal</h1>
-          </div>
-        </div>
+    <aside
+      className={`
+        side-bar-portal bg-white w-64 h-full shadow-md
+        ${isOpen ? 'z-50' : 'z-80'}
+        transform transition-transform duration-300 ease-in-out
+        fixed top-0 left-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0 lg:relative lg:block
+      `}
+    >
+      {/* Sidebar Header */}
+      <div className="px-7 pt-12 pb-6">
+        <h1 className="text-lg font-bold text-gray-800">Affiliate Hub</h1>
       </div>
 
-      {/* Navigation Menu */}
-      <nav className="p-4 space-y-2">
+      {/* Sidebar nav */}
+      <nav className="p-4 space-y-2 pb-14">
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+            className={`
+              w-full flex items-center px-4 py-3 rounded-lg text-left transition
               ${
                 currentPage === item.id
-                  ? 'bg-[#d02c37] text-white'
-                  : 'text-gray-700 hover:bg-black hover:text-white'
+                  ? 'bg-[#d02c37] text-white font-semibold'
+                  : 'text-gray-700 hover:bg-gray-900 hover:text-white'
               }
             `}
           >
-            <span className="font-medium">{item.label}</span>
+            {item.label}
           </button>
         ))}
-      </nav>
 
-      {/* Logout Button */}
-      <nav className="p-4 space-y-2">
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-black hover:text-white"
-        >
-          <span className="font-medium">Logout</span>
-        </button>
+
       </nav>
-    </div>
+    </aside>
   );
 };
 

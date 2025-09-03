@@ -52,28 +52,44 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     }
   };
 
+  // ✅ Banner titles based on step
+  const bannerTitle =
+    step === 'register'
+      ? 'AFFILIATE REGISTER'
+      : step === 'verify'
+      ? 'AFFILIATE VERIFY'
+      : 'AFFILIATE LOGIN';
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <header className="w-full bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center px-6 py-3">
-          <img src={logo} alt="Property Investors" className="h-8 mr-2" />
-          <span className="text-xl font-bold text-black">Property Investors</span>
+
+    <div className="w-[1235px] mx-auto px-1 flex flex-col mt-6">
+        <div className="flex flex-col">
+          <div className="flex items-center space-x-3">
+            <img
+              src={logo}
+              alt="Property Investors Logo"
+              className="w-8 h-8 object-contain"
+            />
+            <h1 className="text-xl font-bold text-gray-800">
+              Property Investors
+            </h1>
+          </div>
         </div>
-        <hr className="border-gray-300" />
-      </header>
+      {/* ✅ HR directly before banner */}
+      <hr className="w-full mx-auto border-black mt-4" />
+      {/* 🔴 Red Banner */}
+      <div className="bg-[#d02c37] text-white text-center h-[195px] mt-5 mb-5 w-full flex items-center justify-center">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
+          {bannerTitle}
+        </h2>
+      </div>
+      <hr className="w-[100%] mx-auto border-black" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-start p-6">
-        {step !== 'register' && (
-          <h1 className="text-xl font-bold text-red-600 mt-4 mb-4">
-            Affiliate Hub Access
-          </h1>
-        )}
-
         {/* ✅ Only wrap login & verify in a card */}
         {step !== 'register' && (
-          <div className="bg-white rounded-lg p-6 shadow w-full max-w-xs">
+          <div className="bg-white rounded-lg p-6 shadow w-full max-w-lg">
             {error && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 {error}
@@ -87,7 +103,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 border rounded-full focus:ring-1  focus:border-transparent"
+                  className="w-full p-3 border rounded-full focus:ring-1 focus:border-transparent"
                   placeholder="Email Address"
                   required
                   disabled={loading}
@@ -96,7 +112,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="w-full py-3 bg-[#d02c37] text-white rounded-full font-semibold  transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Please wait...' : 'Send Code'}
                 </button>
@@ -119,7 +135,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="w-full py-3 bg-[#d02c37] text-white rounded-full font-semibold transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Verifying...' : 'Verify Code'}
                 </button>
@@ -142,7 +158,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               Don’t have an account?{' '}
               <button
                 onClick={() => setStep('register')}
-                className="font-semibold text-blue-600 hover:underline"
+                className="font-semibold text-[#d02c37] hover:underline"
               >
                 Create account
               </button>

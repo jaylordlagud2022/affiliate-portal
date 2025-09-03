@@ -1,0 +1,92 @@
+import { useState } from "react";
+import { auth, db } from "../firebase";
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useEffect } from "react";
+
+const ChatWindow = ({ receiverId, onClose }: { receiverId: string; onClose: () => void }) => {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [text, setText] = useState("");
+
+  // Listen for messages
+  useEffect(() => {
+    if (!auth.currentUser) return;
+
+    const q = query(
+      collection(db, "messages"),
+      where("senderId", "in", [auth.currentUser.uid, receiverId]),
+      where("receiverId", "in", [auth.currentUser.uid, receiverId]),
+      orderBy("timestamp", "asc")
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      setMessages(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => unsub();
+  }, [receiverId]);
+
+  // Send message
+  const sendMessage = async () => {
+    if (!auth.currentUser || !text.trim()) return;
+
+    await addDoc(collection(db, "messages"), {
+      senderId: auth.currentUser.uid,
+      receiverId,
+      text,
+      timestamp: serverTimestamp(),
+    });
+    setText("");
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex justify-between items-center p-3 border-b">
+        <h2 className="font-semibold">Chat</h2>
+        <button onClick={onClose} className="text-sm text-gray-500">✕</button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`p-2 rounded-lg max-w-[70%] ${
+              msg.senderId === auth.currentUser?.uid
+                ? "ml-auto bg-blue-500 text-white"
+                : "mr-auto bg-gray-200"
+            }`}
+          >
+            {msg.text}
+          </div>
+        ))}
+      </div>
+
+      {/* Input */}
+      <div className="p-3 border-t flex">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="flex-1 border rounded-lg px-2 py-1 text-sm"
+          placeholder="Type a message..."
+        />
+        <button
+          onClick={sendMessage}
+          className="ml-2 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatWindow;

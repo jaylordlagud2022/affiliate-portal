@@ -27,23 +27,24 @@ const AffiliateActivity: React.FC = () => {
   const isStepActive = (step: ApplicationStatus) =>
     applicationStatus === step;
 
-  const token = "f1e365232e104880d566d6c2a902aae7"; // replace with dynamic
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
 
   const loadDashboardData = async () => {
     setLoading(true);
     try {
       const [leadsRes, pipelineRes, commRes, statusRes] = await Promise.all([
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/application-status?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/application-status?token=${token}`
         ).then((res) => res.json()).catch(() => null), // optional endpoint
       ]);
 
@@ -74,7 +75,7 @@ const AffiliateActivity: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-8 font-sans">
+    <div className="min-h-screen bg-gray-50 p-8 font-sans">
       <div className="">
         <div className="grid grid-cols-1 gap-8">
           <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-200">
@@ -84,7 +85,7 @@ const AffiliateActivity: React.FC = () => {
               </h2>
               <button
                 onClick={loadDashboardData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm"
+                className="px-4 py-2 bg-[#d02c37] text-white rounded-md hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm"
                 disabled={loading}
               >
                 {loading ? "Loading..." : "Refresh Data"}
@@ -109,7 +110,7 @@ const AffiliateActivity: React.FC = () => {
                           className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white
                             ${
                               isStepActive(step)
-                                ? "bg-blue-600 animate-pulse"
+                                ? "bg-[#d02c37] animate-pulse"
                                 : isStepComplete(step)
                                 ? "bg-green-600"
                                 : "bg-gray-300"
@@ -132,7 +133,7 @@ const AffiliateActivity: React.FC = () => {
                               isStepComplete(progressSteps[index + 1])
                                 ? "bg-green-600"
                                 : isStepActive(progressSteps[index])
-                                ? "bg-blue-600"
+                                ? "bg-[#d02c37]"
                                 : "bg-gray-300"
                             }`}
                         ></div>

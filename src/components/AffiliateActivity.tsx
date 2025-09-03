@@ -42,20 +42,21 @@ const AffiliateActivity: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  const token = "f1e365232e104880d566d6c2a902aae7"; // replace dynamically
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
 
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
       const [leadsRes, pipelineRes, commRes] = await Promise.all([
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         ).then((res) => res.json()),
       ]);
 
@@ -90,7 +91,7 @@ const AffiliateActivity: React.FC = () => {
               </h2>
               <button
                 onClick={fetchDashboardData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm"
+                className="px-4 py-2 bg-[#d02c37] text-white rounded-md hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm"
                 disabled={loading}
               >
                 {loading ? "Loading..." : "Refresh Data"}
@@ -115,7 +116,7 @@ const AffiliateActivity: React.FC = () => {
                           className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white
                             ${
                               isStepActive(step)
-                                ? "bg-blue-600 animate-pulse"
+                                ? "bg-[#d02c37] animate-pulse"
                                 : isStepComplete(step)
                                 ? "bg-green-600"
                                 : "bg-gray-300"
@@ -138,7 +139,7 @@ const AffiliateActivity: React.FC = () => {
                               isStepComplete(progressSteps[index + 1])
                                 ? "bg-green-600"
                                 : isStepActive(progressSteps[index])
-                                ? "bg-blue-600"
+                                ? "bg-[#d02c37]"
                                 : "bg-gray-300"
                             }`}
                         ></div>

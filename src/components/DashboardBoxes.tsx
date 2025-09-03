@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 
 const DashboardBoxes = () => {
-  const [data, setData] = useState([
-    { title: "Earnings", value: "" },
-    { title: "New leads", value: "" },
-    { title: "Current Pipeline", value: "" },
-    { title: "Commissions Due", value: "" },
+  const [data, setData] = useState<
+    { key: "leads" | "pipeline" | "commissions" | "income"; title: string; value: string | number }[]
+  >([
+    { key: "leads", title: "Prospects", value: "" },
+    { key: "pipeline", title: "Opportunities", value: "" },
+    { key: "commissions", title: "Referral fees due", value: "" },
+    { key: "income", title: "Total affiliate income", value: "" },
   ]);
 
   const [leads, setLeads] = useState<any[]>([]);
@@ -19,24 +21,25 @@ const DashboardBoxes = () => {
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
 
-  const token = "f1e365232e104880d566d6c2a902aae7"; // Replace dynamically
+  const token = localStorage.getItem("authToken");
+  if (!token) return null;
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
         const leadsRes = await fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
         );
         const leadsData = await leadsRes.json();
 
         const pipelineRes = await fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
         );
         const pipelineData = await pipelineRes.json();
 
         const commRes = await fetch(
-          `https://affiliate.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         );
         const commData = await commRes.json();
 
@@ -47,10 +50,10 @@ const DashboardBoxes = () => {
         const totalCommission = (commData.data?.length ?? 0) * 5000;
 
         setData([
-          { title: "Earnings", value: "$0" },
-          { title: "New leads", value: leadsData.data?.length ?? 0 },
-          { title: "Current Pipeline", value: pipelineData.data?.length ?? 0 },
-          { title: "Commissions Due", value: `$${totalCommission}` },
+          { key: "leads", title: "Prospects", value: leadsData.data?.length ?? 0 },
+          { key: "pipeline", title: "Opportunities", value: pipelineData.data?.length ?? 0 },
+          { key: "commissions", title: "Referral fees due", value: `$${totalCommission}` },
+          { key: "income", title: "Total affiliate income", value: "$0" },
         ]);
       } catch (err) {
         console.error("Error fetching data", err);
@@ -60,7 +63,7 @@ const DashboardBoxes = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   // Define DataTable columns dynamically
   const getColumns = (type: "leads" | "pipeline" | "commissions") => {
@@ -100,10 +103,10 @@ const DashboardBoxes = () => {
     setModalType(type);
     setModalTitle(
       type === "leads"
-        ? "New Leads"
+        ? "Prospects"
         : type === "pipeline"
-        ? "Current Pipeline"
-        : "Commissions Due"
+        ? "Opportunities"
+        : "Referral fees due"
     );
     setIsModalOpen(true);
     setModalLoading(true);
@@ -132,28 +135,29 @@ const DashboardBoxes = () => {
 
   return (
     <div className="p-4">
-    {/* Dashboard Boxes */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-      {data.map((box, index) => (
-        <div
-          key={index}
-          className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
-          onClick={() => {
-            if (box.title === "New leads") openModal("leads");
-            if (box.title === "Current Pipeline") openModal("pipeline");
-            if (box.title === "Commissions Due") openModal("commissions");
-          }}
-        >
-          <div className="text-2xl font-bold text-white mb-4">{box.title}</div>
-          {loading ? (
-            <div className="text-xl font-medium">Loading...</div>
-          ) : (
-            <div className="text-5xl font-extrabold">{box.value}</div>
-          )}
-        </div>
-      ))}
-    </div>
-
+      {/* Dashboard Boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+        {data.map((box, index) => (
+          <div
+            key={index}
+            className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+            onClick={() => {
+              if (box.key === "leads") openModal("leads");
+              if (box.key === "pipeline") openModal("pipeline");
+              if (box.key === "commissions") openModal("commissions");
+            }}
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-2xl font-bold text-white">{box.title}</span>
+              {loading ? (
+                <span className="text-2xl font-medium">Loading...</span>
+              ) : (
+                <span className="text-2xl font-bold">{box.value}</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Modal */}
       {isModalOpen && (
@@ -176,15 +180,13 @@ const DashboardBoxes = () => {
                 highlightOnHover
                 striped
                 dense
-                defaultSortField={modalType === "leads" ? "Created" : "Meeting Date"}
-                defaultSortAsc={false}
                 noDataComponent={`No ${modalType} found`}
               />
             )}
 
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg"
+              className="mt-4 bg-[#d02c37] text-white px-4 py-2 rounded-lg"
             >
               Close
             </button>
