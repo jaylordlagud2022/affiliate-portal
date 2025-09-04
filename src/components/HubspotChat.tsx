@@ -42,10 +42,10 @@ const HubspotChat: React.FC = () => {
 
     const initChat = () => {
       if (window.HubSpotConversations) {
-        console.log("💬 HubSpot widget ready, trying to identify with:", userInfo);
+        console.log("💬 HubSpot widget available, waiting for ready event");
 
         window.HubSpotConversations.widget.on("ready", () => {
-          console.log("🚀 Sending identify request:", userInfo);
+          console.log("🚀 Chat widget ready, sending identify request:", userInfo);
 
           window.HubSpotConversations.widget.identify({
             email: userInfo.email,
@@ -56,10 +56,19 @@ const HubspotChat: React.FC = () => {
             zip: userInfo.postcode,
           });
 
-          // ✅ Listen for re-ready after identification
-          setTimeout(() => {
-            console.log("🎯 Identification success assumed (widget reloaded with user)");
-          }, 2000);
+          // ✅ Listen for identification result
+          window.HubSpotConversations.widget.on("identityReady", (data: any) => {
+            console.log("✅ HubSpot identity confirmed:", data);
+
+            // Try pulling back the current user info
+            window.HubSpotConversations.widget.getUser().then((user: any) => {
+              console.log("🙋 Current identified user from widget.getUser():", user);
+            });
+          });
+
+          window.HubSpotConversations.widget.on("identityFailed", (err: any) => {
+            console.error("❌ HubSpot identity failed:", err);
+          });
         });
       } else {
         console.warn("⚠️ HubSpotConversations not available yet");
