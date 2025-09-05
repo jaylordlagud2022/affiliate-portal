@@ -69,33 +69,32 @@ const HubspotChat: React.FC = () => {
   }, [userInfo]);
 
   // 💬 Step 3: Inject HubSpot script with identification
-  useEffect(() => {
-      if (!userInfo || !idToken) return;
+useEffect(() => {
+    if (!userInfo || !idToken) return;
 
-      window.hsConversationsSettings = {
-        loadImmediately: false,
-        identificationEmail: userInfo.email,
-        identificationToken: idToken,
-      };
+    window.hsConversationsSettings = {
+      loadImmediately: false,
+      identificationEmail: userInfo.email,
+      identificationToken: idToken,
+    };
 
-      const scriptId = "hs-script-loader";
-      if (document.getElementById(scriptId)) {
-        window.HubSpotConversations?.widget?.load();
-      } else {
-        const script = document.createElement("script");
-        script.src = "//js.hs-scripts.com/46099113.js";
-        script.id = scriptId;
-        script.async = true;
-        script.defer = true;
+    // Use the official 'onReady' callback
+    window.hsConversationsOnReady = [
+      () => {
+        window.HubSpotConversations.widget.load();
+      },
+    ];
 
-        // Call load() after the script has loaded
-        script.onload = () => {
-          window.HubSpotConversations?.widget?.load();
-        };
-
-        document.body.appendChild(script);
-      }
-    }, [userInfo, idToken]);
+    // Inject the script if it's not already there
+    if (!document.getElementById("hs-script-loader")) {
+      const script = document.createElement("script");
+      script.src = "//js.hs-scripts.com/46099113.js";
+      script.id = "hs-script-loader";
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+  }, [userInfo, idToken]);
     
   return null;
 };
