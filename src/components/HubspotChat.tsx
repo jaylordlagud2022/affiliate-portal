@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 const HubspotChat: React.FC = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
 
+  // 🔑 Step 1: Fetch user info from your WP API
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -37,44 +38,52 @@ const HubspotChat: React.FC = () => {
       });
   }, []);
 
+  // 💬 Step 2: Inject HubSpot widget and run identify
   useEffect(() => {
     if (!userInfo) return;
 
     const initChat = () => {
-      if (window.HubSpotConversations) {
-        console.log("💬 HubSpot widget available, waiting for ready event");
+      if (!window.HubSpotConversations) {
+        console.warn("⚠️ HubSpotConversations not available yet");
+        return;
+      }
 
-        window.HubSpotConversations.widget.on("ready", () => {
-          console.log("🚀 Chat widget ready, sending identify request:", userInfo);
+      console.log("💬 HubSpot widget available, binding ready event...");
 
-          window.HubSpotConversations.widget.identify({
-            email: userInfo.email,
-            firstname: userInfo.firstName,
-            lastname: userInfo.lastName,
-            phone: userInfo.phone,
-            state: userInfo.state,
-            zip: userInfo.postcode,
-          });
+      window.HubSpotConversations.widget.on("ready", () => {
+        console.log("🚀 Chat widget ready, sending identify request:", userInfo);
 
-          // ✅ Listen for identification result
-          window.HubSpotConversations.widget.on("identityReady", (data: any) => {
-            console.log("✅ HubSpot identity confirmed:", data);
+        // Check if identify method exists
+        if (typeof window.HubSpotConversations.widget.identify !== "function") {
+          console.error("❌ HubSpot identify() is not available for this portal.");
+          return;
+        }
 
-            // Try pulling back the current user info
-            window.HubSpotConversations.widget.getUser().then((user: any) => {
-              console.log("🙋 Current identified user from widget.getUser():", user);
-            });
-          });
+        window.HubSpotConversations.widget.identify({
+          email: userInfo.email,
+          firstname: userInfo.firstName,
+          lastname: userInfo.lastName,
+          phone: userInfo.phone,
+          state: userInfo.state,
+          zip: userInfo.postcode,
+        });
 
-          window.HubSpotConversations.widget.on("identityFailed", (err: any) => {
-            console.error("❌ HubSpot identity failed:", err);
+        // ✅ Listen for identity results
+        window.HubSpotConversations.widget.on("identityReady", (data: any) => {
+          console.log("✅ HubSpot identity confirmed:", data);
+
+          window.HubSpotConversations.widget.getUser().then((user: any) => {
+            console.log("🙋 Current identified user from widget.getUser():", user);
           });
         });
-      } else {
-        console.warn("⚠️ HubSpotConversations not available yet");
-      }
+
+        window.HubSpotConversations.widget.on("identityFailed", (err: any) => {
+          console.error("❌ HubSpot identity failed:", err);
+        });
+      });
     };
 
+    // Inject script if not already present
     if (!document.getElementById("hs-script-loader")) {
       console.log("📌 Injecting HubSpot chat script");
       const script = document.createElement("script");
