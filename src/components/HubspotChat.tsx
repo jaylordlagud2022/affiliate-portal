@@ -27,7 +27,7 @@ const HubspotChat: React.FC = () => {
             lastName: hub.lastname || "",
           };
 
-          console.log("✅ Setting userInfo:", info);
+          console.log("✅ 1 Setting userInfo:", info);
           setUserInfo(info);
         } else {
           console.warn("⚠️ No hubspot data found in API response");
@@ -70,29 +70,33 @@ const HubspotChat: React.FC = () => {
 
   // 💬 Step 3: Inject HubSpot script with identification
   useEffect(() => {
-    if (!userInfo || !idToken) return;
+      if (!userInfo || !idToken) return;
 
-    // Set HubSpot global config BEFORE script loads
-    window.hsConversationsSettings = {
-      loadImmediately: false,
-      identificationEmail: userInfo.email,
-      identificationToken: idToken,
-    };
+      window.hsConversationsSettings = {
+        loadImmediately: false,
+        identificationEmail: userInfo.email,
+        identificationToken: idToken,
+      };
 
-    if (!document.getElementById("hs-script-loader")) {
-      console.log("📌 Injecting HubSpot chat script with identification");
-      const script = document.createElement("script");
-      script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
-      script.id = "hs-script-loader";
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    } else {
-      console.log("📌 HubSpot script already present, reloading widget");
-      window.HubSpotConversations?.widget?.load();
-    }
-  }, [userInfo, idToken]);
+      const scriptId = "hs-script-loader";
+      if (document.getElementById(scriptId)) {
+        window.HubSpotConversations?.widget?.load();
+      } else {
+        const script = document.createElement("script");
+        script.src = "//js.hs-scripts.com/46099113.js";
+        script.id = scriptId;
+        script.async = true;
+        script.defer = true;
 
+        // Call load() after the script has loaded
+        script.onload = () => {
+          window.HubSpotConversations?.widget?.load();
+        };
+
+        document.body.appendChild(script);
+      }
+    }, [userInfo, idToken]);
+    
   return null;
 };
 
