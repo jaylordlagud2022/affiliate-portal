@@ -11,7 +11,9 @@ const HubspotChat: React.FC = () => {
       return;
     }
 
-    fetch(`https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`)
+    fetch(
+      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log("📥 HubSpot API response:", data);
@@ -43,51 +45,70 @@ const HubspotChat: React.FC = () => {
     if (!userInfo) return;
 
     const initChat = () => {
-      if (!window.HubSpotConversations) {
-        console.warn("⚠️ HubSpotConversations not available yet");
-        return;
-      }
+      console.log("⏳ Polling for HubSpotConversations...");
 
-      console.log("💬 HubSpot widget available, binding ready event...");
+      const check = setInterval(() => {
+        if (
+          window.HubSpotConversations &&
+          window.HubSpotConversations.widget
+        ) {
+          clearInterval(check);
+          console.log("💬 HubSpotConversations loaded ✅");
 
-      window.HubSpotConversations.widget.on("ready", () => {
-        console.log("🚀 Chat widget ready, sending identify request:", userInfo);
+          window.HubSpotConversations.widget.on("ready", () => {
+            console.log(
+              "🚀 Chat widget ready, sending identify request:",
+              userInfo
+            );
 
-        // Check if identify method exists
-        if (typeof window.HubSpotConversations.widget.identify !== "function") {
-          console.error("❌ HubSpot identify() is not available for this portal.");
-          return;
-        }
+            if (
+              typeof window.HubSpotConversations.widget.identify !== "function"
+            ) {
+              console.error("❌ HubSpot identify() is not available.");
+              return;
+            }
 
-        window.HubSpotConversations.widget.identify({
-          email: userInfo.email,
-          firstname: userInfo.firstName,
-          lastname: userInfo.lastName,
-          phone: userInfo.phone,
-          state: userInfo.state,
-          zip: userInfo.postcode,
-        });
+            window.HubSpotConversations.widget.identify({
+              email: userInfo.email,
+              firstname: userInfo.firstName,
+              lastname: userInfo.lastName,
+              phone: userInfo.phone,
+              state: userInfo.state,
+              zip: userInfo.postcode,
+            });
 
-        // ✅ Listen for identity results
-        window.HubSpotConversations.widget.on("identityReady", (data: any) => {
-          console.log("✅ HubSpot identity confirmed:", data);
+            window.HubSpotConversations.widget.on(
+              "identityReady",
+              (data: any) => {
+                console.log("✅ HubSpot identity confirmed:", data);
 
-          window.HubSpotConversations.widget.getUser().then((user: any) => {
-            console.log("🙋 Current identified user from widget.getUser():", user);
+                window.HubSpotConversations.widget
+                  .getUser()
+                  .then((user: any) => {
+                    console.log(
+                      "🙋 Current identified user from widget.getUser():",
+                      user
+                    );
+                  });
+              }
+            );
+
+            window.HubSpotConversations.widget.on(
+              "identityFailed",
+              (err: any) => {
+                console.error("❌ HubSpot identity failed:", err);
+              }
+            );
           });
-        });
-
-        window.HubSpotConversations.widget.on("identityFailed", (err: any) => {
-          console.error("❌ HubSpot identity failed:", err);
-        });
-      });
+        }
+      }, 500);
     };
 
     // Inject script if not already present
     if (!document.getElementById("hs-script-loader")) {
-      console.log("📌1 Injecting HubSpot chat script");
+      console.log("📌 Injecting HubSpot chat script");
       const script = document.createElement("script");
-      script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
+      script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your portal ID
       script.id = "hs-script-loader";
       script.async = true;
       script.defer = true;
