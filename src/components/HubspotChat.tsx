@@ -44,52 +44,53 @@ const HubspotChat: React.FC = () => {
   useEffect(() => {
     if (!userInfo) return;
 
-    const initChat = () => {
-      if (typeof window.hsConversationsOnReady !== "function") {
-        console.error("❌ hsConversationsOnReady is not available.");
-        return;
-      }
+    const tryInitChat = (retries = 10) => {
+      if (typeof window.hsConversationsOnReady === "function") {
+        console.log("💬 hsConversationsOnReady is available, binding callback...");
 
-      console.log("💬 Binding HubSpot conversations onReady callback...");
+        window.hsConversationsOnReady((widget: any) => {
+          console.log("🚀 HubSpot chat widget is ready", widget);
 
-      window.hsConversationsOnReady((widget: any) => {
-        console.log("🚀 HubSpot chat widget is ready", widget);
+          if (typeof widget.identify !== "function") {
+            console.error("❌ identify() is not available on widget");
+            return;
+          }
 
-        if (typeof widget.identify !== "function") {
-          console.error("❌ identify() is not available on widget");
-          return;
-        }
-
-        widget.identify({
-          email: userInfo.email,
-          firstname: userInfo.firstName,
-          lastname: userInfo.lastName,
-          phone: userInfo.phone,
-          state: userInfo.state,
-          zip: userInfo.postcode,
-        });
-
-        // Try to pull back identified user
-        if (typeof widget.getUser === "function") {
-          widget.getUser().then((user: any) => {
-            console.log("🙋 HubSpot identified user:", user);
+          widget.identify({
+            email: userInfo.email,
+            firstname: userInfo.firstName,
+            lastname: userInfo.lastName,
+            phone: userInfo.phone,
+            state: userInfo.state,
+            zip: userInfo.postcode,
           });
-        }
-      });
+
+          if (typeof widget.getUser === "function") {
+            widget.getUser().then((user: any) => {
+              console.log("🙋 HubSpot identified user:", user);
+            });
+          }
+        });
+      } else if (retries > 0) {
+        console.warn("⚠️ hsConversationsOnReady not available yet, retrying...");
+        setTimeout(() => tryInitChat(retries - 1), 1000);
+      } else {
+        console.error("❌ Failed to find hsConversationsOnReady after retries.");
+      }
     };
 
     if (!document.getElementById("hs-script-loader")) {
-      console.log("📌2 Injecting HubSpot chat script");
+      console.log("3 Injecting HubSpot chat script");
       const script = document.createElement("script");
       script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
       script.id = "hs-script-loader";
       script.async = true;
       script.defer = true;
-      script.onload = initChat;
+      script.onload = () => tryInitChat();
       document.body.appendChild(script);
     } else {
       console.log("📌 HubSpot chat script already loaded, initializing");
-      initChat();
+      tryInitChat();
     }
   }, [userInfo]);
 
