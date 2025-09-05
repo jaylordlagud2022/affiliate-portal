@@ -40,75 +40,48 @@ const HubspotChat: React.FC = () => {
       });
   }, []);
 
-  // 💬 Step 2: Inject HubSpot widget and run identify
+  // 💬 Step 2: Inject HubSpot widget and identify user
   useEffect(() => {
     if (!userInfo) return;
 
     const initChat = () => {
-      console.log("⏳ Polling for HubSpotConversations...");
+      if (typeof window.hsConversationsOnReady !== "function") {
+        console.error("❌ hsConversationsOnReady is not available.");
+        return;
+      }
 
-      const check = setInterval(() => {
-        if (
-          window.HubSpotConversations &&
-          window.HubSpotConversations.widget
-        ) {
-          clearInterval(check);
-          console.log("💬 HubSpotConversations loaded ✅");
+      console.log("💬 Binding HubSpot conversations onReady callback...");
 
-          window.HubSpotConversations.widget.on("ready", () => {
-            console.log(
-              "🚀 Chat widget ready, sending identify request:",
-              userInfo
-            );
+      window.hsConversationsOnReady((widget: any) => {
+        console.log("🚀 HubSpot chat widget is ready", widget);
 
-            if (
-              typeof window.HubSpotConversations.widget.identify !== "function"
-            ) {
-              console.error("❌ HubSpot identify() is not available.");
-              return;
-            }
+        if (typeof widget.identify !== "function") {
+          console.error("❌ identify() is not available on widget");
+          return;
+        }
 
-            window.HubSpotConversations.widget.identify({
-              email: userInfo.email,
-              firstname: userInfo.firstName,
-              lastname: userInfo.lastName,
-              phone: userInfo.phone,
-              state: userInfo.state,
-              zip: userInfo.postcode,
-            });
+        widget.identify({
+          email: userInfo.email,
+          firstname: userInfo.firstName,
+          lastname: userInfo.lastName,
+          phone: userInfo.phone,
+          state: userInfo.state,
+          zip: userInfo.postcode,
+        });
 
-            window.HubSpotConversations.widget.on(
-              "identityReady",
-              (data: any) => {
-                console.log("✅ HubSpot identity confirmed:", data);
-
-                window.HubSpotConversations.widget
-                  .getUser()
-                  .then((user: any) => {
-                    console.log(
-                      "🙋 Current identified user from widget.getUser():",
-                      user
-                    );
-                  });
-              }
-            );
-
-            window.HubSpotConversations.widget.on(
-              "identityFailed",
-              (err: any) => {
-                console.error("❌ HubSpot identity failed:", err);
-              }
-            );
+        // Try to pull back identified user
+        if (typeof widget.getUser === "function") {
+          widget.getUser().then((user: any) => {
+            console.log("🙋 HubSpot identified user:", user);
           });
         }
-      }, 500);
+      });
     };
 
-    // Inject script if not already present
     if (!document.getElementById("hs-script-loader")) {
-      console.log("📌 Injecting HubSpot chat script");
+      console.log("📌2 Injecting HubSpot chat script");
       const script = document.createElement("script");
-      script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your portal ID
+      script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
       script.id = "hs-script-loader";
       script.async = true;
       script.defer = true;
