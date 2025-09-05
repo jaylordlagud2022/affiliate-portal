@@ -85,7 +85,7 @@ const HubspotChat: React.FC = () => {
 
     // Inject script if not already present
     if (!document.getElementById("hs-script-loader")) {
-      console.log("📌 Injecting HubSpot chat script");
+      console.log("📌1 Injecting HubSpot chat script");
       const script = document.createElement("script");
       script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
       script.id = "hs-script-loader";
