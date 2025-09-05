@@ -35,16 +35,16 @@ const AffiliateActivity: React.FC = () => {
     try {
       const [leadsRes, pipelineRes, commRes, statusRes] = await Promise.all([
         fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         ).then((res) => res.json()),
         fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/application-status?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/application-status?token=${token}`
         ).then((res) => res.json()).catch(() => null), // optional endpoint
       ]);
 

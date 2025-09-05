@@ -10,7 +10,7 @@ const HubspotChat: React.FC = () => {
       return;
     }
 
-    fetch(`http://52.64.155.40/wp-json/hubspot-login/v1/user-info?token=${token}`)
+    fetch(`https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("📥 HubSpot API response:", data);

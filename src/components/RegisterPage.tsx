@@ -95,7 +95,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
 
     try {
       const response = await fetch(
-        'http://52.64.155.40/wp-json/hubspot-api/v1/register',
+        'https://api.researchtopurchase.com.au/wp-json/hubspot-api/v1/register',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

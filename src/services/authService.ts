@@ -9,7 +9,7 @@ class AuthService extends BaseAPI {
   private async sendHubspotCode(email: string): Promise<ApiResponse<User>> {
     try {
       const response = await this.makeRequest(
-        `http://52.64.155.40/wp-json/hubspot-login/v1/send-code`,
+        `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/send-code`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ class AuthService extends BaseAPI {
   async verifyHubspotCode(code: string, email: string): Promise<ApiResponse<User>> {
     try {
       const response = await this.makeRequest(
-        `http://52.64.155.40/wp-json/hubspot-login/v1/verify-code`,
+        `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/verify-code`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -108,7 +108,7 @@ class AuthService extends BaseAPI {
 async register(data: Record<string, any>): Promise<ApiResponse<User>> {
   try {
     const response = await this.makeRequest(
-      `http://52.64.155.40/wp-json/hubspot-login/v1/register`, // 👈 your URL
+      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/register`, // 👈 your URL
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

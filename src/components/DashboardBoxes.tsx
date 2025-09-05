@@ -29,17 +29,17 @@ const DashboardBoxes = () => {
       setLoading(true);
       try {
         const leadsRes = await fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
         );
         const leadsData = await leadsRes.json();
 
         const pipelineRes = await fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
         );
         const pipelineData = await pipelineRes.json();
 
         const commRes = await fetch(
-          `http://52.64.155.40/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         );
         const commData = await commRes.json();
 
