@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const HubspotChat: React.FC = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [idToken, setIdToken] = useState<string | null>(null);
 
   // 🔑 Step 1: Fetch user info from your WP API
   useEffect(() => {
@@ -24,9 +25,6 @@ const HubspotChat: React.FC = () => {
             email: hub.email,
             firstName: hub.firstname || "",
             lastName: hub.lastname || "",
-            phone: hub.mobilephone || "",
-            state: hub.state || "",
-            postcode: hub.zip || "",
           };
 
           console.log("✅ Setting userInfo:", info);
@@ -40,59 +38,60 @@ const HubspotChat: React.FC = () => {
       });
   }, []);
 
-  // 💬 Step 2: Inject HubSpot widget and identify user
+  // 💬 Step 2: Request visitor identification token from WP API
   useEffect(() => {
-    if (!userInfo) return;
+    if (!userInfo?.email) return;
 
-    const tryInitChat = (retries = 10) => {
-      if (typeof window.hsConversationsOnReady === "function") {
-        console.log("💬 hsConversationsOnReady is available, binding callback...");
-
-        window.hsConversationsOnReady((widget: any) => {
-          console.log("🚀 HubSpot chat widget is ready", widget);
-
-          if (typeof widget.identify !== "function") {
-            console.error("❌ identify() is not available on widget");
-            return;
-          }
-
-          widget.identify({
-            email: userInfo.email,
-            firstname: userInfo.firstName,
-            lastname: userInfo.lastName,
-            phone: userInfo.phone,
-            state: userInfo.state,
-            zip: userInfo.postcode,
-          });
-
-          if (typeof widget.getUser === "function") {
-            widget.getUser().then((user: any) => {
-              console.log("🙋 HubSpot identified user:", user);
-            });
-          }
-        });
-      } else if (retries > 0) {
-        console.warn("⚠️ hsConversationsOnReady not available yet, retrying...");
-        setTimeout(() => tryInitChat(retries - 1), 1000);
-      } else {
-        console.error("❌ Failed to find hsConversationsOnReady after retries.");
+    fetch(
+      "https://api.researchtopurchase.com.au/wp-json/hubspot-chat/v1/identify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userInfo.email,
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+        }),
       }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.token) {
+          console.log("✅ Got HubSpot visitor token:", data.token);
+          setIdToken(data.token);
+        } else {
+          console.error("❌ Failed to fetch visitor token:", data);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Visitor token request failed:", err);
+      });
+  }, [userInfo]);
+
+  // 💬 Step 3: Inject HubSpot script with identification
+  useEffect(() => {
+    if (!userInfo || !idToken) return;
+
+    // Set HubSpot global config BEFORE script loads
+    window.hsConversationsSettings = {
+      loadImmediately: false,
+      identificationEmail: userInfo.email,
+      identificationToken: idToken,
     };
 
     if (!document.getElementById("hs-script-loader")) {
-      console.log("3 Injecting HubSpot chat script");
+      console.log("📌 Injecting HubSpot chat script with identification");
       const script = document.createElement("script");
       script.src = "//js.hs-scripts.com/46099113.js"; // 🔹 replace with your HubSpot portal ID
       script.id = "hs-script-loader";
       script.async = true;
       script.defer = true;
-      script.onload = () => tryInitChat();
       document.body.appendChild(script);
     } else {
-      console.log("📌 HubSpot chat script already loaded, initializing");
-      tryInitChat();
+      console.log("📌 HubSpot script already present, reloading widget");
+      window.HubSpotConversations?.widget?.load();
     }
-  }, [userInfo]);
+  }, [userInfo, idToken]);
 
   return null;
 };
