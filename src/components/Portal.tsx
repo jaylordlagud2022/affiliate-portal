@@ -1,33 +1,59 @@
-import React, { useState } from 'react';
-import AffiliatePortalSidebar from './AffiliatePortalSidebar';
-import DashboardBoxes from './DashboardBoxes';
-import MarketingBoxes from './MarketingBoxes';
-import AccountPage from './AccountPage';
-import AffiliateActivity from './AffiliateActivity';
-import HubspotChat from "./HubspotChat"; // adjust path
+import React, { useState, useEffect } from "react";
+import AffiliatePortalSidebar from "./AffiliatePortalSidebar";
+import DashboardBoxes from "./DashboardBoxes";
+import MarketingBoxes from "./MarketingBoxes";
+import OnboardingBoxes from "./OnboardingBoxes";
+import AccountPage from "./AccountPage";
+import AffiliateActivity from "./AffiliateActivity";
+import ChatPopup from "./ChatPopup";
 
-type PageType = 'portal' | 'marketing' | 'dashboard' | 'account' | 'affiliate' | 'affiliateActivity';
+type PageType =
+  | "portal"
+  | "marketing"
+  | "dashboard"
+  | "account"
+  | "affiliate"
+  | "onboarding"  
+  | "affiliateActivity";
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
-  const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
+  const [currentPage, setCurrentPage] = useState<PageType>("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   const bannerTitles: Record<PageType, string> = {
-    dashboard: 'AFFILIATE DASHBOARD',
-    marketing: 'MARKETING HUB',
-    portal: 'AFFILIATE PORTAL',
-    account: 'MY ACCOUNT',
-    affiliate: 'AFFILIATE HUB',
-    affiliateActivity: 'PARTNER STATUS HUB',
+    dashboard: "Affliate Hub",
+    marketing: "Marketing Hub",
+    portal: "Affliate Hub",
+    account: "My Account",
+    affiliate: "Affliate Hub",
+    onboarding: "Affliate Hub",    
+    affiliateActivity: "Partner Status Hub",
   };
 
+  // ✅ Fetch role once user logs in
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    fetch(
+      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data?.role) {
+          setRole(data.data.role); // "lead" or "leadOwner"
+        }
+      });
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col">
-      {/* 🔴 Red Banner (dynamic) */}
+    <div className="min-h-screen bg-white font-maven flex flex-col">
+      {/* 🔴 Banner */}
       <div className="bg-[#d02c37] text-white text-center h-[195px] mt-5 mb-5 w-full flex items-center justify-center relative">
         <button
           className="absolute left-4 top-1/2 -translate-y-1/2 lg:hidden"
@@ -40,11 +66,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             strokeWidth="2"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
 
-        <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-wide px-3">
+          <b>Property Investors.</b>
+        </h2>
+        <h2 className="text-2xl md:text-3xl tracking-wide">
           {bannerTitles[currentPage]}
         </h2>
       </div>
@@ -52,6 +85,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
       {/* ✅ Layout */}
       <div className="flex flex-1 portal-container">
+        {/* Sidebar */}
         <div className="hidden lg:block">
           <AffiliatePortalSidebar
             currentPage={currentPage}
@@ -81,17 +115,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           </>
         )}
 
+        {/* Main Content */}
         <div className="flex-1 p-8">
-          {currentPage === 'dashboard' && <DashboardBoxes />}
-          {currentPage === 'marketing' && <MarketingBoxes />}
-          {currentPage === 'portal' && <DashboardBoxes />}
-          {currentPage === 'account' && <AccountPage />}
-          {currentPage === 'affiliateActivity' && <AffiliateActivity />}
+          {currentPage === "dashboard" && <DashboardBoxes />}
+          {currentPage === "marketing" && <MarketingBoxes />}
+          {currentPage === "portal" && <DashboardBoxes />}
+          {currentPage === "onboarding" && <OnboardingBoxes />}          
+          {currentPage === "account" && <AccountPage />}
+          {currentPage === "affiliateActivity" && <AffiliateActivity />}
         </div>
       </div>
 
-      {/* ✅ HubSpot Chat mounted globally here */}
-      <HubspotChat />
+      {/* ✅ Role-based Chat */}
+      {role === "lead" && <ChatPopup userEmail="user1@example.com"/>}
     </div>
   );
 };

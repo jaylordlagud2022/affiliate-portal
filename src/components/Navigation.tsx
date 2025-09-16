@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, User } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 interface NavigationProps {
-  currentPage: 'dashboard' | 'account' | 'affiliate' | 'marketing'  ;
+  currentPage: 'dashboard' | 'account' | 'affiliate' | 'marketing';
   onNavigate: (page: 'dashboard' | 'account' | 'affiliate' | 'marketing') => void;
   onLogout: () => void;
   onToggleSidebar: () => void;
-  userName?: string;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
@@ -15,13 +14,42 @@ const Navigation: React.FC<NavigationProps> = ({
   onNavigate,
   onLogout,
   onToggleSidebar,
-  userName = 'John Doe',
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState<string>('John Doe');
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    console.log("🔑 Raw currentUser:", storedUser);
+
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+
+        // HubSpot data is inside parsed.hubspot
+        const hubspotData = parsed.hubspot || {};
+
+        // Build full name
+        const fullName = [hubspotData.firstname, hubspotData.lastname]
+          .filter(Boolean) // remove null/undefined/empty
+          .join(' ')
+          .trim();
+
+        if (fullName) {
+          setUserName(fullName);
+        } else if (parsed.email) {
+          // fallback: show email if no name
+          setUserName(parsed.email);
+        }
+      } catch (e) {
+        console.error("❌ Failed to parse currentUser from localStorage:", e);
+      }
+    }
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="w-[1235px] mx-auto px-1 py-4 flex items-center justify-between border-b border-black bg-white">
+      <div className="font-maven w-[1235px] mx-auto px-1 py-4 flex items-center justify-between border-b border-black bg-white">
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <img src={logo} alt="Property Investors Logo" className="w-8 h-8 object-contain" />
@@ -52,12 +80,6 @@ const Navigation: React.FC<NavigationProps> = ({
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                {/* <button
-                  onClick={() => { onNavigate('account'); setDropdownOpen(false); }}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  Account
-                </button> */}
                 <button
                   onClick={onLogout}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors text-red-600"
@@ -70,7 +92,6 @@ const Navigation: React.FC<NavigationProps> = ({
         </div>
       </div>
     </nav>
-
   );
 };
 

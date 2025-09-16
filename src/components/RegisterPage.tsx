@@ -1,48 +1,95 @@
-import React, { useState } from 'react';
-import profileImage from '../assets/profile-placeholder.png';
+import React, { useState } from "react";
+import profileImage from "../assets/profile-placeholder.png";
 
 interface RegisterPageProps {
   onBack: () => void;
   onRegisterSuccess?: () => void;
 }
 
-const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }) => {
+const RegisterPage: React.FC<RegisterPageProps> = ({
+  onBack,
+  onRegisterSuccess,
+}) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    suburb: '',
-    state: '',
-    postcode: '',
-    company: '',
-    abn: '',
-    website: '',
-    profileImage: '' // base64 or uploaded URL
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    suburb: "",
+    state: "",
+    postcode: "",
+    company: "",
+    abn: "",
+    website: "",
+    profileImage: "", // base64 or uploaded URL
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Format ABN: 11 digits => "12 345 678 901"
+  // Format ABN as 11 digits => "12 345 678 901"
   const formatABN = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11); // keep only numbers
-    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, '$1 $2 $3 $4');
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    return digits.replace(
+      /(\d{2})(\d{3})(\d{3})(\d{3})/,
+      "$1 $2 $3 $4"
+    );
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
-    if (name === 'abn') {
-      value = formatABN(value);
+  const handleABNChange = async (value: string) => {
+    const abnDigits = value.replace(/\s/g, "");
+
+    if (abnDigits.length === 11) {
+      try {
+        const res = await fetch(
+          `https://api.researchtopurchase.com.au/wp-json/abr/v1/lookup1?abn=${abnDigits}`
+        );
+        const data = await res.json();
+
+        if (res.ok && data?.entity_name) {
+          // ✅ Valid ABN
+          setFormData((prev) => ({
+            ...prev,
+            abn: value,
+            company: data.entity_name,
+            state: data.state || prev.state,
+            postcode: data.postcode || prev.postcode,
+          }));
+          setFormErrors((prev) => ({ ...prev, abn: "" }));
+        } else {
+          // ❌ Invalid ABN
+          setFormErrors((prev) => ({ ...prev, abn: "Invalid ABN" }));
+          setFormData((prev) => ({ ...prev, abn: value, company: "" }));
+        }
+      } catch {
+        setFormErrors((prev) => ({ ...prev, abn: "Invalid ABN" }));
+        setFormData((prev) => ({ ...prev, abn: value, company: "" }));
+      }
+    } else {
+      // Reset if not 11 digits yet
+      setFormErrors((prev) => ({ ...prev, abn: "" }));
+      setFormData((prev) => ({ ...prev, abn: value, company: "" }));
     }
+  };
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { name, value } = e.target;
+
+    if (name === "abn") {
+      value = formatABN(value);
+      setFormData((prev) => ({ ...prev, abn: value }));
+      await handleABNChange(value);
+      return;
+    }
+
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
     setFormErrors({
       ...formErrors,
-      [name]: '' // clear error on typing
+      [name]: "",
     });
   };
 
@@ -53,7 +100,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
       reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          profileImage: reader.result as string
+          profileImage: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
@@ -62,22 +109,25 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    if (!formData.firstName) errors.firstName = 'First name is required';
-    if (!formData.lastName) errors.lastName = 'Last name is required';
-    if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) errors.phone = 'Enter a valid 10-digit phone';
-    if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = 'Enter a valid email';
-    if (!formData.suburb) errors.suburb = 'Suburb is required';
-    if (!formData.state) errors.state = 'State is required';
-    if (!/^\d{4}$/.test(formData.postcode)) errors.postcode = 'Enter a valid 4-digit postcode';
-    if (!formData.company) errors.company = 'Company name is required';
+    if (!formData.firstName) errors.firstName = "First name is required";
+    if (!formData.lastName) errors.lastName = "Last name is required";
+    if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, "")))
+      errors.phone = "Enter a valid 10-digit phone";
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      errors.email = "Enter a valid email";
+    if (!formData.suburb) errors.suburb = "Suburb is required";
+    if (!formData.state) errors.state = "State is required";
+    if (!/^\d{4}$/.test(formData.postcode))
+      errors.postcode = "Enter a valid 4-digit postcode";
+    if (!formData.company) errors.company = "Company name is required";
 
-    const abnDigits = formData.abn.replace(/\s/g, '');
-    if (abnDigits.length !== 11) errors.abn = 'ABN must be 11 digits';
+    const abnDigits = formData.abn.replace(/\s/g, "");
+    if (abnDigits.length !== 11) errors.abn = "ABN must be 11 digits";
 
     try {
       new URL(formData.website);
     } catch {
-      errors.website = 'Enter a valid website URL';
+      errors.website = "Enter a valid website URL";
     }
 
     setFormErrors(errors);
@@ -95,11 +145,14 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
 
     try {
       const response = await fetch(
-        'https://api.researchtopurchase.com.au/wp-json/hubspot-api/v1/register',
+        "https://api.researchtopurchase.com.au/wp-json/hubspot-api/v1/register",
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, abn: formData.abn.replace(/\s/g, '') }) // send digits only
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            abn: formData.abn.replace(/\s/g, ""),
+          }),
         }
       );
 
@@ -112,11 +165,15 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
           onBack();
         }, 2000);
       } else {
-        setFormErrors({ general: result?.message || result?.error || 'Registration failed' });
+        setFormErrors({
+          general: result?.message || result?.error || "Registration failed",
+        });
       }
     } catch (err) {
-      console.error('API error:', err);
-      setFormErrors({ general: 'Something went wrong. Please try again.' });
+      console.error("API error:", err);
+      setFormErrors({
+        general: "Something went wrong. Please try again.",
+      });
     }
 
     setLoading(false);
@@ -125,8 +182,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
   const inputClass = (name: string) =>
     `w-full p-3 border rounded-lg focus:ring-2 focus:border-transparent ${
       formErrors[name]
-        ? 'border-red-500 focus:ring-red-500'
-        : 'border-gray-300 focus:ring-blue-500'
+        ? "border-red-500 focus:ring-red-500"
+        : "border-gray-300 focus:ring-blue-500"
     }`;
 
   return (
@@ -179,10 +236,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
                 value={formData.firstName}
                 onChange={handleChange}
                 placeholder="First Name"
-                className={inputClass('firstName')}
+                className={inputClass("firstName")}
                 disabled={loading}
               />
-              {formErrors.firstName && <p className="text-xs text-red-600">{formErrors.firstName}</p>}
+              {formErrors.firstName && (
+                <p className="text-xs text-red-600">{formErrors.firstName}</p>
+              )}
             </div>
             <div>
               <input
@@ -191,10 +250,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
                 value={formData.lastName}
                 onChange={handleChange}
                 placeholder="Last Name"
-                className={inputClass('lastName')}
+                className={inputClass("lastName")}
                 disabled={loading}
               />
-              {formErrors.lastName && <p className="text-xs text-red-600">{formErrors.lastName}</p>}
+              {formErrors.lastName && (
+                <p className="text-xs text-red-600">{formErrors.lastName}</p>
+              )}
             </div>
           </div>
 
@@ -206,10 +267,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
               value={formData.phone}
               onChange={handleChange}
               placeholder="Phone"
-              className={inputClass('phone')}
+              className={inputClass("phone")}
               disabled={loading}
             />
-            {formErrors.phone && <p className="text-xs text-red-600">{formErrors.phone}</p>}
+            {formErrors.phone && (
+              <p className="text-xs text-red-600">{formErrors.phone}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -220,10 +283,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
               value={formData.email}
               onChange={handleChange}
               placeholder="Email"
-              className={inputClass('email')}
+              className={inputClass("email")}
               disabled={loading}
             />
-            {formErrors.email && <p className="text-xs text-red-600">{formErrors.email}</p>}
+            {formErrors.email && (
+              <p className="text-xs text-red-600">{formErrors.email}</p>
+            )}
           </div>
 
           {/* Suburb / State / Postcode */}
@@ -235,10 +300,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
                 value={formData.suburb}
                 onChange={handleChange}
                 placeholder="Suburb"
-                className={inputClass('suburb')}
+                className={inputClass("suburb")}
                 disabled={loading}
               />
-              {formErrors.suburb && <p className="text-xs text-red-600">{formErrors.suburb}</p>}
+              {formErrors.suburb && (
+                <p className="text-xs text-red-600">{formErrors.suburb}</p>
+              )}
             </div>
             <div>
               <input
@@ -247,10 +314,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
                 value={formData.state}
                 onChange={handleChange}
                 placeholder="State"
-                className={inputClass('state')}
+                className={inputClass("state")}
                 disabled={loading}
               />
-              {formErrors.state && <p className="text-xs text-red-600">{formErrors.state}</p>}
+              {formErrors.state && (
+                <p className="text-xs text-red-600">{formErrors.state}</p>
+              )}
             </div>
             <div>
               <input
@@ -259,14 +328,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
                 value={formData.postcode}
                 onChange={handleChange}
                 placeholder="Postcode"
-                className={inputClass('postcode')}
+                className={inputClass("postcode")}
                 disabled={loading}
               />
-              {formErrors.postcode && <p className="text-xs text-red-600">{formErrors.postcode}</p>}
+              {formErrors.postcode && (
+                <p className="text-xs text-red-600">{formErrors.postcode}</p>
+              )}
             </div>
           </div>
 
-          {/* Company */}
+          {/* Company (readonly after ABN lookup) */}
           <div>
             <input
               type="text"
@@ -274,10 +345,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
               value={formData.company}
               onChange={handleChange}
               placeholder="Company"
-              className={inputClass('company')}
+              className={inputClass("company")}
+              readOnly={!!formData.company} // ✅ readonly if set
               disabled={loading}
             />
-            {formErrors.company && <p className="text-xs text-red-600">{formErrors.company}</p>}
+            {formErrors.company && (
+              <p className="text-xs text-red-600">{formErrors.company}</p>
+            )}
           </div>
 
           {/* ABN */}
@@ -288,10 +362,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
               value={formData.abn}
               onChange={handleChange}
               placeholder="ABN (11 digits)"
-              className={inputClass('abn')}
+              className={inputClass("abn")}
               disabled={loading}
             />
-            {formErrors.abn && <p className="text-xs text-red-600">{formErrors.abn}</p>}
+            {formErrors.abn && (
+              <p className="text-xs text-red-600">{formErrors.abn}</p>
+            )}
           </div>
 
           {/* Website */}
@@ -302,10 +378,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
               value={formData.website}
               onChange={handleChange}
               placeholder="Website URL (https://...)"
-              className={inputClass('website')}
+              className={inputClass("website")}
               disabled={loading}
             />
-            {formErrors.website && <p className="text-xs text-red-600">{formErrors.website}</p>}
+            {formErrors.website && (
+              <p className="text-xs text-red-600">{formErrors.website}</p>
+            )}
           </div>
 
           <button
@@ -313,7 +391,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBack, onRegisterSuccess }
             disabled={loading || success}
             className="w-full py-3 bg-[#d02c37] text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
           >
-            {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'SUBMIT APPLICATION'}
+            {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "SUBMIT APPLICATION"}
           </button>
         </form>
       </div>

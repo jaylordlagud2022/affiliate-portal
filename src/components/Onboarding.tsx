@@ -4,16 +4,15 @@ import DashboardContent from './DashboardContent';
 import AccountPage from './AccountPage';
 import Portal from './Portal';
 import Marketing from './Marketing';
-import Onboarding from './Onboarding';
 import AffiliatePortalSidebar from './AffiliatePortalSidebar';
 
-type PageType = 'portal' | 'marketing' | 'dashboard' | 'account' | 'affiliate' | 'onboarding' ; 
+type PageType = 'portal' | 'marketing' | 'dashboard' | 'account' | 'affiliate';
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
+const Onboarding: React.FC<DashboardProps> = ({ onLogout }) => {
   const [currentPage, setCurrentPage] = useState<PageType>('portal');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -70,7 +69,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         {currentPage === 'marketing' && <Marketing />}
         {currentPage === 'dashboard' && <DashboardContent />}
         {currentPage === 'account' && <AccountPage />}
-        {currentPage === 'onboarding' && <Onboarding />}       
         {currentPage === 'affiliate' && <div>Affiliate Content</div>}
       </div>
 
@@ -85,4 +83,4 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   );
 };
 
-export default Dashboard;
+export default Onboarding;

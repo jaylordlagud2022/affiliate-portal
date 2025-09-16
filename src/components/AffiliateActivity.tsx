@@ -1,193 +1,195 @@
-import React, { useState, useEffect } from "react";
-
-// Define possible application statuses for clarity
-type ApplicationStatus = "registered" | "reviewed" | "approved" | "active";
+import React, { useState } from "react";
+import BronzeImg from "../assets/03 House Bronze.png";
+import SilverImg from "../assets/03 House Silver.png";
+import GoldImg from "../assets/03 House Gold.png";
+import PlatinumImg from "../assets/03 House Platinum.png";
+import SmallHouseImg from "../assets/06-House.png";
+import SmallHouseActiveImg from "../assets/06 House Company Red.png";
+import logo from "../assets/logo.png"; // ✅ icon for rewards list
 
 const AffiliateActivity: React.FC = () => {
-  // State for dashboard statistics
-  const [stats, setStats] = useState({
-    totalEarnings: 0,
-    leads: 0,
-    pipeline: 0,
-    commissionsDue: 0,
-    conversionRate: 0,
-  });
-
-  // State for loading indicator
-  const [loading, setLoading] = useState(true);
-
-  // State for application status
-  const [applicationStatus, setApplicationStatus] =
-    useState<ApplicationStatus>("registered");
-
-  // Define the order of steps
-  const progressSteps: ApplicationStatus[] = [
-    "registered",
-    "reviewed",
-    "approved",
-    "active",
-  ];
-
-  const isStepComplete = (step: ApplicationStatus) => {
-    const currentIdx = progressSteps.indexOf(applicationStatus);
-    const stepIdx = progressSteps.indexOf(step);
-    return stepIdx <= currentIdx;
-  };
-
-  const isStepActive = (step: ApplicationStatus) => {
-    return applicationStatus === step;
-  };
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const [num] = useState(5); // ✅ number of active including big houses
 
   const token = localStorage.getItem("authToken");
-  if (!token) return;
+  if (!token) return null;
 
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    try {
-      const [leadsRes, pipelineRes, commRes] = await Promise.all([
-        fetch(
-          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
-        ).then((res) => res.json()),
-        fetch(
-          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
-        ).then((res) => res.json()),
-        fetch(
-          `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
-        ).then((res) => res.json()),
-      ]);
+  /** Render small houses dynamically */
+  const renderSmallHouses = (count: number, startIndex: number) => {
+    return Array.from({ length: count }).map((_, i) => {
+      const currentIndex = startIndex + i;
 
-      const leads = leadsRes.data?.length ?? 0;
-      const pipeline = pipelineRes.data?.length ?? 0;
-      const commissions = commRes.data?.length ?? 0;
+      // ✅ Highlight if num has reached this position
+      const isActive = num >= currentIndex;
 
-      setStats({
-        totalEarnings: commissions * 5000, // example calc
-        leads,
-        pipeline,
-        commissionsDue: commissions * 5000,
-        conversionRate: leads > 0 ? ((commissions / leads) * 100) : 0,
-      });
-
-      // you can also fetch status from API if available
-      setApplicationStatus("approved");
-    } catch (err) {
-      console.error("Error fetching dashboard stats", err);
-    } finally {
-      setLoading(false);
-    }
+      return (
+        <img
+          key={i}
+          src={isActive ? SmallHouseActiveImg : SmallHouseImg}
+          alt="small house"
+          className="w-11 h-11"
+        />
+      );
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 gap-8">
-            <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-              <h2 className="text-3xl font-extrabold text-gray-800">
-                AFFILIATE OVERVIEW
-              </h2>
-              <button
-                onClick={fetchDashboardData}
-                className="px-4 py-2 bg-[#d02c37] text-white rounded-md hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm"
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Refresh Data"}
-              </button>
-            </div>
+    <div className="min-h-screen p-8 font-sans bg-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Status Reward */}
+        <h3 className="text-2xl font-bold text-gray-700 mb-6 pb-3">
+          Status Reward
+        </h3>
 
-            {loading ? (
-              <div className="text-center py-10 text-gray-500 text-lg">
-                Loading dashboard data...
+        {/* Progress bar with houses + rewards */}
+        <div className="flex items-start justify-between mb-12 flex-wrap gap-8">
+          {/* Bronze (hidden when num >= 5) */}
+          {num < 5 && (
+            <div className="flex flex-col items-center flex-1">
+              {/* Big + Small houses side by side */}
+              <div className="flex items-center gap-2 relative">
+                {/* Bronze big house (milestone = 0) */}
+                <img
+                  src={BronzeImg}
+                  alt="Bronze"
+                  className={`w-20 h-20 ${num >= 0 ? "opacity-100" : "opacity-40"}`}
+                />
+                <div className="flex gap-2 relative">
+                  <span className="absolute -top-5 left-0 w-full text-xs text-red-600 font-medium text-left">
+                    Complimentary
+                  </span>
+                  {/* Bronze smalls = 1–4 */}
+                  {renderSmallHouses(4, 1)}
+                </div>
               </div>
-            ) : (
-              <>
-                {/* Progress Steps */}
-                <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">
-                  Application Status
-                </h3>
-                <div className="flex items-center justify-between mb-8 flex-wrap">
-                  {progressSteps.map((step, index) => (
-                    <React.Fragment key={step}>
-                      <div className="flex flex-col items-center flex-1 min-w-[80px] text-center px-1">
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white
-                            ${
-                              isStepActive(step)
-                                ? "bg-[#d02c37] animate-pulse"
-                                : isStepComplete(step)
-                                ? "bg-green-600"
-                                : "bg-gray-300"
-                            }`}
-                        >
-                          {isStepComplete(step)
-                            ? "✓"
-                            : isStepActive(step)
-                            ? "→"
-                            : ""}
-                        </div>
-                        <span className="text-sm mt-2 text-gray-700 capitalize">
-                          {step}
-                        </span>
-                      </div>
-                      {index < progressSteps.length - 1 && (
-                        <div
-                          className={`flex-1 h-px mx-2 transition-colors duration-300 relative
-                            ${
-                              isStepComplete(progressSteps[index + 1])
-                                ? "bg-green-600"
-                                : isStepActive(progressSteps[index])
-                                ? "bg-[#d02c37]"
-                                : "bg-gray-300"
-                            }`}
-                        ></div>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
+              <span className="mt-2 font-semibold text-gray-800">Bronze</span>
 
-                {/* Dashboard Cards (Stats) */}
-                <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">
-                  Overview Statistics
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                  <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 text-center shadow-sm">
-                    <h4 className="text-lg font-bold text-gray-800">
-                      Total Earnings
-                    </h4>
-                    <p className="text-2xl font-extrabold text-green-600 mt-2">
-                      ${stats.totalEarnings.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 text-center shadow-sm">
-                    <h4 className="text-lg font-bold text-gray-800">
-                      Total Leads
-                    </h4>
-                    <p className="text-2xl font-extrabold text-blue-600 mt-2">
-                      {stats.leads}
-                    </p>
-                  </div>
-                  <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 text-center shadow-sm">
-                    <h4 className="text-lg font-bold text-gray-800">
-                      Leads in Pipeline
-                    </h4>
-                    <p className="text-2xl font-extrabold text-yellow-600 mt-2">
-                      {stats.pipeline}
-                    </p>
-                  </div>
-                  <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 text-center shadow-sm">
-                    <h4 className="text-lg font-bold text-gray-800">
-                      Conversion Rate
-                    </h4>
-                    <p className="text-2xl font-extrabold text-purple-600 mt-2">
-                      {stats.conversionRate.toFixed(2)}%
-                    </p>
-                  </div>
+              {/* Empty space instead of Bronze reward */}
+              <div className="mt-8 w-full max-w-xs h-[180px]"></div>
+            </div>
+          )}
+
+          {/* Silver (starts at 5) */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="flex items-center gap-2">
+              {/* Silver big house (milestone = 5) */}
+              <img
+                src={SilverImg}
+                alt="Silver"
+                className={`w-20 h-20 ${num >= 5 ? "opacity-100" : "opacity-40"}`}
+              />
+              <div className="flex gap-2">
+                {/* Silver smalls = 6–9 */}
+                {renderSmallHouses(4, 6)}
+              </div>
+            </div>
+            <span className="mt-2 font-semibold text-gray-800">Silver</span>
+
+            {/* Silver reward card */}
+            <div className="mt-4 w-full max-w-xs">
+              <div className="text-center">
+                <button className="bg-gray-400 text-white px-4 py-2 rounded-full font-semibold">
+                  Obtain Silver Rewards
+                </button>
+                <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    $1000 BONUS reward travel vouchers
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    Priority support
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    Exclusive access to our Affiliate Hub
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Gold (starts at 9) */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="flex items-center gap-2">
+              {/* Gold big house (milestone = 9) */}
+              <img
+                src={GoldImg}
+                alt="Gold"
+                className={`w-20 h-20 ${num >= 9 ? "opacity-100" : "opacity-40"}`}
+              />
+              <div className="flex gap-2">
+                {/* Gold smalls = 10–13 */}
+                {renderSmallHouses(4, 10)}
+              </div>
+            </div>
+            <span className="mt-2 font-semibold text-gray-800">Gold</span>
+
+            {/* Gold reward card */}
+            <div className="mt-4 w-full max-w-xs">
+              <div className="text-center">
+                <button className="bg-yellow-600 text-white px-4 py-2 rounded-full font-semibold">
+                  Obtain Gold Rewards
+                </button>
+                <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    $2000 BONUS reward travel vouchers
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    Priority support
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <img src={logo} alt="x" className="w-4 h-4" />
+                    Exclusive access to our Affiliate Hub
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Platinum (takes Bronze’s place when num >= 5) */}
+          {num >= 5 && (
+            <div className="flex flex-col items-center flex-1">
+              <div className="flex items-center gap-2">
+                <img
+                  src={PlatinumImg}
+                  alt="Platinum"
+                  className={`w-20 h-20 ${num >= 13 ? "opacity-100" : "opacity-40"}`}
+                />
+                <div className="flex gap-2">
+                  {/* Platinum smalls = 14–17 */}
+                  {renderSmallHouses(4, 14)}
                 </div>
-              </>
-            )}
+              </div>
+              <span className="mt-2 font-semibold text-gray-800">
+                Platinum
+              </span>
+
+              {/* Platinum reward card */}
+              <div className="mt-4 w-full max-w-xs">
+                <div className="text-center">
+                  <button className="bg-purple-600 text-white px-4 py-2 rounded-full font-semibold">
+                    Obtain Platinum Rewards
+                  </button>
+                  <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
+                    <li className="flex items-center gap-2">
+                      <img src={logo} alt="x" className="w-4 h-4" />
+                      $3000 BONUS reward travel vouchers
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <img src={logo} alt="x" className="w-4 h-4" />
+                      Dedicated VIP support
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <img src={logo} alt="x" className="w-4 h-4" />
+                      Premium Affiliate Hub Access
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-type PageType = 'portal' | 'account' | 'marketing' | 'dashboard' | 'affiliate' | 'affiliateActivity';
+type PageType = 'portal' | 'account' | 'marketing' | 'dashboard' | 'affiliate' | 'onboarding' | 'affiliateActivity';
 
 interface AffiliatePortalSidebarProps {
   currentPage: PageType;
@@ -19,28 +19,23 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
     { id: 'portal', label: 'Dashboard Hub' },
     { id: 'marketing', label: 'Marketing Hub' },
     { id: 'affiliateActivity', label: 'Partner Status Hub' },
+    { id: 'onboarding', label: 'Onboarding' },    
     { id: 'account', label: 'Account Hub' },
-
   ];
 
   return (
     <aside
       className={`
         side-bar-portal bg-white w-64 h-full shadow-md
-        ${isOpen ? 'z-50' : 'z-80'}
+        ${isOpen ? 'z-30' : 'z-80'}
         transform transition-transform duration-300 ease-in-out
         fixed top-0 left-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:relative lg:block
       `}
     >
-      {/* Sidebar Header */}
-      <div className="px-7 pt-12 pb-6">
-        <h1 className="text-lg font-bold text-gray-800">Affiliate Hub</h1>
-      </div>
-
       {/* Sidebar nav */}
-      <nav className="p-4 space-y-2 pb-14">
+      <nav className="mt-5 p-4 space-y-2 pb-14">
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -52,13 +47,12 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
                   ? 'bg-[#d02c37] text-white font-semibold'
                   : 'text-gray-700 hover:bg-gray-900 hover:text-white'
               }
+              ${item.id === 'account' ? 'mt-10' : ''}  // extra spacing before Account Hub
             `}
           >
             {item.label}
           </button>
         ))}
-
-
       </nav>
     </aside>
   );

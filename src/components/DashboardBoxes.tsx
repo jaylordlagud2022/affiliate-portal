@@ -3,12 +3,12 @@ import DataTable from "react-data-table-component";
 
 const DashboardBoxes = () => {
   const [data, setData] = useState<
-    { key: "leads" | "pipeline" | "commissions" | "income"; title: string; value: string | number }[]
+    { key: "leads" | "pipeline" | "commissions" | "news"; title: string; value: string | number }[]
   >([
     { key: "leads", title: "Prospects", value: "" },
     { key: "pipeline", title: "Opportunities", value: "" },
-    { key: "commissions", title: "Referral fees due", value: "" },
-    { key: "income", title: "Total affiliate income", value: "" },
+    { key: "commissions", title: "Your rewards", value: "" },
+    { key: "news", title: "Property Investor news", value: "Coming soon" },
   ]);
 
   const [leads, setLeads] = useState<any[]>([]);
@@ -52,8 +52,8 @@ const DashboardBoxes = () => {
         setData([
           { key: "leads", title: "Prospects", value: leadsData.data?.length ?? 0 },
           { key: "pipeline", title: "Opportunities", value: pipelineData.data?.length ?? 0 },
-          { key: "commissions", title: "Referral fees due", value: `$${totalCommission}` },
-          { key: "income", title: "Total affiliate income", value: "$0" },
+          { key: "commissions", title: "Your rewards", value: `$${totalCommission}` },
+          { key: "news", title: "Property Investor news", value: "Coming soon" },
         ]);
       } catch (err) {
         console.error("Error fetching data", err);
@@ -80,20 +80,31 @@ const DashboardBoxes = () => {
       ];
     } else if (type === "pipeline") {
       return [
-        { name: "Deal Name", selector: (row: any) => row.dealname || "-", sortable: true },
-        { name: "Stage", selector: (row: any) => row.dealstage || "-", sortable: true },
         {
-          name: "Meeting Date",
+          name: "Client Name",
           selector: (row: any) =>
-            row.meeting ? new Date(row.meeting).toLocaleString() : "-",
+            row.contact
+              ? `${row.contact.firstname ?? ""} ${row.contact.lastname ?? ""}`.trim()
+              : "-",
           sortable: true,
         },
+        { name: "Opportunity Name", selector: (row: any) => row.dealname || "-", sortable: true },
+        { name: "Opportunity Stage", selector: (row: any) => row.dealstage || "-", sortable: true },
+        { name: "Meeting Date", selector: (row: any) => row.meeting || "-", sortable: true },
       ];
     } else {
       return [
-        { name: "Deal Name", selector: (row: any) => row.dealname || "-", sortable: true },
-        { name: "Stage", selector: (row: any) => row.dealstage || "-", sortable: true },
-        { name: "Commission", selector: () => 5000, sortable: true },
+        {
+          name: "Client Name",
+          selector: (row: any) =>
+            row.contact
+              ? `${row.contact.firstname ?? ""} ${row.contact.lastname ?? ""}`.trim()
+              : "-",
+          sortable: true,
+        },
+        { name: "Opportunity Name", selector: (row: any) => row.dealname || "-", sortable: true },
+        { name: "Opportunity Stage", selector: (row: any) => row.dealstage || "-", sortable: true },
+        { name: "Commission", selector: () => "$5000", sortable: true },
       ];
     }
   };
@@ -106,7 +117,7 @@ const DashboardBoxes = () => {
         ? "Prospects"
         : type === "pipeline"
         ? "Opportunities"
-        : "Referral fees due"
+        : "Your rewards"
     );
     setIsModalOpen(true);
     setModalLoading(true);
@@ -137,26 +148,44 @@ const DashboardBoxes = () => {
     <div className="p-4">
       {/* Dashboard Boxes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-        {data.map((box, index) => (
-          <div
-            key={index}
-            className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
-            onClick={() => {
-              if (box.key === "leads") openModal("leads");
-              if (box.key === "pipeline") openModal("pipeline");
-              if (box.key === "commissions") openModal("commissions");
-            }}
-          >
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-white">{box.title}</span>
-              {loading ? (
-                <span className="text-2xl font-medium">Loading...</span>
-              ) : (
-                <span className="text-2xl font-bold">{box.value}</span>
-              )}
+        {data.map((box, index) => {
+          if (box.key === "news") {
+            return (
+              <div
+                key={index}
+                className="bg-gray-300 text-gray-600 p-12 rounded-2xl shadow-lg cursor-not-allowed relative"
+              >
+                {/* Title on top-left */}
+                <span className="text-2xl font-bold">{box.title}</span>
+
+                {/* Coming soon at bottom-center */}
+                <span className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-lg font-medium">
+                  {box.value}
+                </span>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={index}
+              className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+              onClick={() => {
+                if (box.key === "leads") openModal("leads");
+                if (box.key === "pipeline") openModal("pipeline");
+                if (box.key === "commissions") openModal("commissions");
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold">{box.title}</span>
+                <span className="text-2xl font-bold">
+                  {loading ? "Loading..." : box.value}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+
       </div>
 
       {/* Modal */}
