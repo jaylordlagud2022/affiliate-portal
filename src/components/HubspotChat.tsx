@@ -13,7 +13,7 @@ const HubspotChat: React.FC = () => {
     }
 
     fetch(
-      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -43,7 +43,7 @@ const HubspotChat: React.FC = () => {
     if (!userInfo?.email) return;
 
     fetch(
-      "https://api.researchtopurchase.com.au/wp-json/hubspot-chat/v1/identify",
+      "https://api.propertyinvestors.com.au/wp-json/hubspot-chat/v1/identify",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

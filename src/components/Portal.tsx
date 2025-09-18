@@ -41,7 +41,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     if (!token) return;
 
     fetch(
-      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
     )
       .then((res) => res.json())
       .then((data) => {

@@ -43,7 +43,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     if (abnDigits.length === 11) {
       try {
         const res = await fetch(
-          `https://api.researchtopurchase.com.au/wp-json/abr/v1/lookup1?abn=${abnDigits}`
+          `https://api.propertyinvestors.com.au/wp-json/abr/v1/lookup1?abn=${abnDigits}`
         );
         const data = await res.json();
 
@@ -145,7 +145,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
     try {
       const response = await fetch(
-        "https://api.researchtopurchase.com.au/wp-json/hubspot-api/v1/register",
+        "https://api.propertyinvestors.com.au/wp-json/hubspot-api/v1/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

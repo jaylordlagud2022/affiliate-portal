@@ -19,7 +19,7 @@ const EbookGallery: React.FC = () => {
   // Load ebooks from WP API
   useEffect(() => {
     fetch(
-      "https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/marketing-documents?folder_id=ebooks"
+      "https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/marketing-documents?folder_id=ebooks"
     )
       .then((res) => res.json())
       .then((data) => {
@@ -47,7 +47,7 @@ const EbookGallery: React.FC = () => {
     setSending(true);
 
     fetch(
-      "https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/track-downloads",
+      "https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/track-downloads",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

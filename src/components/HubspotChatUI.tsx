@@ -23,7 +23,7 @@ const HubspotChatUI: React.FC = () => {
     if (!token) return;
 
     fetch(
-      `https://api.researchtopurchase.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -39,8 +39,8 @@ const HubspotChatUI: React.FC = () => {
 
     // Admins → no filter, Owners → filter by their email
     const url = userInfo.isAdmin
-      ? "https://api.researchtopurchase.com.au/wp-json/hubspot-chat/v1/conversations"
-      : `https://api.researchtopurchase.com.au/wp-json/hubspot-chat/v1/conversations?ownerEmail=${encodeURIComponent(
+      ? "https://api.propertyinvestors.com.au/wp-json/hubspot-chat/v1/conversations"
+      : `https://api.propertyinvestors.com.au/wp-json/hubspot-chat/v1/conversations?ownerEmail=${encodeURIComponent(
           userInfo.email
         )}`;
 
