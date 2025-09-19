@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import profileImage from "../assets/profile-placeholder.png";
 
 interface RegisterPageProps {
   onBack: () => void;
@@ -21,7 +20,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     company: "",
     abn: "",
     website: "",
-    profileImage: "", // base64 or uploaded URL
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -31,10 +29,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   // Format ABN as 11 digits => "12 345 678 901"
   const formatABN = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
-    return digits.replace(
-      /(\d{2})(\d{3})(\d{3})(\d{3})/,
-      "$1 $2 $3 $4"
-    );
+    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, "$1 $2 $3 $4");
   };
 
   const handleABNChange = async (value: string) => {
@@ -91,20 +86,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
       ...formErrors,
       [name]: "",
     });
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          profileImage: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const validateForm = () => {
@@ -211,22 +192,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Profile Image Upload */}
-          <div className="flex flex-col items-center">
-            <img
-              src={formData.profileImage || profileImage}
-              alt="Profile"
-              className="w-24 h-24 rounded-full object-cover mb-2 border"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={loading}
-              className="text-sm text-gray-600"
-            />
-          </div>
-
           {/* First + Last Name */}
           <div className="grid grid-cols-2 gap-2">
             <div>
