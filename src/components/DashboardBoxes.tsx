@@ -153,13 +153,15 @@ const DashboardBoxes = () => {
             return (
               <div
                 key={index}
-                className="bg-gray-300 text-gray-600 p-12 rounded-2xl shadow-lg cursor-not-allowed relative"
+                className="bg-gray-300 text-gray-600 rounded-2xl shadow-lg cursor-not-allowed flex flex-col items-center justify-center h-40"
               >
-                {/* Title on top-left */}
-                <span className="text-2xl font-bold">{box.title}</span>
+                {/* Title centered */}
+                <span className="text-2xl font-bold mb-2 text-center">
+                  {box.title}
+                </span>
 
-                {/* Coming soon at bottom-center */}
-                <span className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-lg font-medium">
+                {/* Coming soon centered */}
+                <span className="text-lg font-medium text-center">
                   {box.value}
                 </span>
               </div>
