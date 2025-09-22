@@ -350,28 +350,34 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
               <p className="text-xs text-red-600">{formErrors.website}</p>
             )}
           </div>
+        <div className="flex justify-center">
 
           <button
             type="submit"
             disabled={loading || success}
             className="
-              w-full
-              py-3
               bg-[#d02c37]
               text-white
-              rounded-lg
               font-bold
-              transition-all duration-150
+              text-lg
+              border
+              rounded-md
+              transition-all duration-200
               disabled:opacity-50
               hover:bg-black
               hover:text-white
-              hover:font-normal
+              hover:underline
             "
-            style={{ fontFamily: "Verdana, sans-serif" }}
+            style={{
+              fontFamily: 'Verdana, sans-serif',
+              borderColor: '#BF3C3D',
+              borderRadius: '5px',
+              padding: '30px 30px',
+            }}
           >
-            {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
+            {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'Partner with us'}
           </button>
-
+        </div>          
         </form>
       </div>
     </div>
