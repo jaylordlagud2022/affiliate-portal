@@ -85,14 +85,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       {/* 🔴 Red Banner */}
       <div className="bg-[#d02c37] text-white text-center h-[195px] mt-5 mb-5 w-full flex items-center justify-center">
         <h2
-          className="text-2xl md:text-3xl tracking-wide font-maven"
-          style={{ letterSpacing: '-2.7px' }}
+          style={{
+            fontFamily: '"Maven Pro", sans-serif',
+            fontSize: '2.7em',
+            fontWeight: 300,
+            lineHeight: '1.2em',
+            letterSpacing: '-2.7px',
+            color: '#FFFFFF',
+          }}
         >
-          <span className="font-bold">Property investors.</span>{' '}
+          <span style={{ fontWeight: 500 }}>Property investors.</span>{' '}
           <span>{bannerTitle}.</span>
         </h2>
       </div>
-
       <hr className="w-[100%] mx-auto border-black" />
 
       {/* ✅ Layout changes depending on step */}
