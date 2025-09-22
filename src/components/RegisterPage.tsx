@@ -168,7 +168,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     }`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-1">
+    <div className="min-h-screen flex flex-col items-center ">
       <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-1">
         <div className="flex items-center mb-6">
           <button

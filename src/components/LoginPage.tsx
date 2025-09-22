@@ -11,7 +11,7 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [step, setStep] = useState<'login' | 'verify' | 'register' | 'thankyou'>('login');
+  const [step, setStep] = useState<'login' | 'verify' | 'register'>('login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -55,24 +55,25 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   // ✅ Banner titles based on step
   const bannerTitle =
     step === 'register'
-      ? 'AFFILIATE REGISTER'
+      ? 'Affiliate register'
       : step === 'verify'
       ? 'AFFILIATE VERIFY'
-      : step === 'thankyou'
-      ? 'REGISTRATION SUBMITTED'
-      : 'AFFILIATE LOGIN';
+      : 'Affiliate login';
 
   return (
     <div className="w-[1235px] mx-auto px-1 flex flex-col mt-6">
       {/* Header */}
-      <div className="flex flex-col">
+      <div className="flex flex-col h-[100px] justify-center">
         <div className="flex items-center space-x-3">
           <img
             src={logo}
             alt="Property Investors Logo"
             className="w-8 h-8 object-contain"
           />
-          <h1 className="text-xl font-bold text-gray-800">
+          <h1
+            className="text-xl font-bold text-gray-800"
+            style={{ fontSize: '50px', letterSpacing: '-2.7px' }}
+          >
             Property Investors
           </h1>
         </div>
@@ -83,60 +84,95 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
       {/* 🔴 Red Banner */}
       <div className="bg-[#d02c37] text-white text-center h-[195px] mt-5 mb-5 w-full flex items-center justify-center">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
-          {bannerTitle}
+        <h2
+          className="text-2xl md:text-3xl tracking-wide font-maven"
+          style={{ letterSpacing: '-2.7px' }}
+        >
+          <span className="font-bold">Property investors.</span>{' '}
+          <span>{bannerTitle}.</span>
         </h2>
       </div>
 
       <hr className="w-[100%] mx-auto border-black" />
 
-      {/* ✅ 70/30 Layout */}
-      <div className="flex flex-row mt-6 gap-6">
-        {/* 70% Section */}
-        <div className="w-[70%]">
-          {step === 'thankyou' ? (
-            // ✅ Green thank you box
-            <div className="bg-green-100 border border-green-400 text-green-800 rounded-lg p-8 shadow-sm">
-              <h3 className="text-xl font-bold mb-4">Thank you for registering.</h3>
-              <p className="mb-3">
-                Your application to join the <strong>Property Investors Affiliate Program</strong> has been successfully submitted.
-              </p>
-              <p className="mb-3">
-                A member of our team will review your registration and reach out to you shortly to confirm your details. We’re excited to partner with you and look forward to helping you grow with us.
-              </p>
-              <p className="font-semibold">
-                Next Step: Keep an eye on your phone and email — our team will be in touch soon.
-              </p>
-            </div>
-          ) : (
-            // ✅ Default intro text
-            <div className="bg-gray-50 rounded-lg p-8 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Thank you for your interest in partnering with us.
-              </h3>
-              <p className="text-gray-700 mb-3">
-                By registering, you’ll take the first step toward becoming a Property Investors affiliate.
-              </p>
-              <p className="text-gray-700 mb-3">
-                By joining our affiliate hub, you’ll gain full access to:
-              </p>
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
-                <li>Exclusive marketing materials and tools</li>
-                <li>Real-time progress of your opportunities and rewards</li>
-                <li>Training resources to help you succeed</li>
-                <li>Ongoing support from your dedicated sales representative</li>
-              </ul>
-              <p className="text-gray-700 mt-4">
-                Your success is our priority, and we’re here to provide everything you need to make the most of this partnership.
-              </p>
-              <p className="text-gray-800 font-semibold mt-4">Register now to get started.</p>
-            </div>
-          )}
-        </div>
+      {/* ✅ Layout changes depending on step */}
+      {step === 'register' ? (
+        // 📌 Register Layout (70/30)
+        <div className="flex flex-row mt-6 gap-6">
+          {/* 70% Left Section */}
+          <div className="w-[60%]">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Join the Property Investors Affiliate Hub.
+            </h3>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              Thank you for your interest in partnering with us. By registering,
+              you’ll take the first step toward becoming a Property Investors
+              affiliate.
+            </p>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              By joining our affiliate hub, you’ll gain full access to:
+            </p>
+            <ul
+              className="list-disc list-inside text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              <li>Exclusive marketing materials and tools</li>
+              <li>Real-time progress of your opportunities and rewards</li>
+              <li>Training resources to help you succeed</li>
+              <li>Ongoing support from your dedicated sales representative</li>
+            </ul>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              Your success is our priority, and we’re here to provide everything
+              you need to make the most of this partnership.
+            </p>
+            <p
+              className="text-gray-900 font-semibold"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              Register now to get started.
+            </p>
+          </div>
 
-        {/* 30% Login/Register Section */}
-        <div className="w-[30%] flex flex-col items-center justify-start">
-          {step !== 'register' && step !== 'thankyou' && (
+          {/* 30% Register Form */}
+          <div className="w-[40%] flex flex-col items-center justify-start">
+            <div className="w-full">
+              <RegisterPage onBack={() => setStep('login')} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        // 📌 Login + Verify Layout (70/30)
+        <div className="flex flex-row mt-6 gap-6">
+          {/* 70% Text Section */}
+          <div className="w-[60%]">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Affiliate Hub
+            </h3>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            >
+              Our Affiliate Program is designed to create strong, long-term
+              business partnerships built on trust and shared success. We work
+              closely with our affiliates to provide the tools, resources, and
+              support needed to grow together. With access to an exclusive hub,
+              direct communication with your dedicated sales representative,
+              you’ll always have what you need to succeed and strengthen the
+              relationship between our businesses.
+            </p>
+          </div>
+
+          {/* 30% Login/Verify Form */}
+          <div className="w-[40%] flex flex-col items-center justify-start">
             <div className="bg-white rounded-lg p-6 shadow w-full">
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -152,7 +188,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full p-3 border rounded-full focus:ring-1 focus:border-transparent"
-                    placeholder="Email Address"
+                    placeholder="Enter Email Address"
                     required
                     disabled={loading}
                   />
@@ -188,31 +224,24 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 </form>
               )}
             </div>
-          )}
 
-          {/* ✅ RegisterPage shown directly */}
-          {step === 'register' && (
-            <div className="w-full">
-              <RegisterPage onBack={() => setStep('login')} onSuccess={() => setStep('thankyou')} />
-            </div>
-          )}
-
-          {/* Create Account */}
-          {step !== 'register' && step !== 'thankyou' && (
-            <div className="mt-6 text-center">
-              <p className="text-gray-700 text-sm">
-                Don’t have an account?{' '}
-                <button
-                  onClick={() => setStep('register')}
-                  className="font-semibold text-[#d02c37] hover:underline"
-                >
-                  Create account
-                </button>
-              </p>
-            </div>
-          )}
+            {/* Create Account */}
+            {step !== 'verify' && (
+              <div className="mt-6 text-center">
+                <p className="text-gray-700 text-sm">
+                  Looking to partner with us?{' '}
+                  <button
+                    onClick={() => setStep('register')}
+                    className="font-semibold text-[#d02c37] hover:underline"
+                  >
+                    Register today
+                  </button>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

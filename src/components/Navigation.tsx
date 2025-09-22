@@ -53,7 +53,7 @@ const Navigation: React.FC<NavigationProps> = ({
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <img src={logo} alt="Property Investors Logo" className="w-8 h-8 object-contain" />
-          <h1 className="text-xl font-bold text-gray-800">Property Investors</h1>
+          <h1 className="text-xl font-bold text-gray-800"  style={{fontSize: '50px' }}>Property Investors</h1>
         </div>
 
         {/* Right section */}
