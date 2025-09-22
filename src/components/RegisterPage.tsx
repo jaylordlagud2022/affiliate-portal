@@ -350,34 +350,36 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
               <p className="text-xs text-red-600">{formErrors.website}</p>
             )}
           </div>
-        <div className="flex justify-center">
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={loading || success}
+              className="
+                bg-[#d02c37]
+                text-white
+                text-lg
+                border
+                rounded-md
+                transition-all duration-200
+                disabled:opacity-50
+                hover:bg-black
+                hover:text-white
+                hover:underline
+                px-10 py-6
+                min-w-[280px]   /* ✅ lock minimum width */
+              "
+              style={{
+                fontFamily: '"Maven Pro", sans-serif',
+                borderColor: '#BF3C3D',
+                borderRadius: '5px',
+              }}
+            >
+              <span className="font-bold hover:font-normal block text-center">
+                {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'Partner with us'}
+              </span>
+            </button>
+          </div>
 
-          <button
-            type="submit"
-            disabled={loading || success}
-            className="
-              bg-[#d02c37]
-              text-white
-              font-bold
-              text-lg
-              border
-              rounded-md
-              transition-all duration-200
-              disabled:opacity-50
-              hover:bg-black
-              hover:text-white
-              hover:underline
-            "
-            style={{
-              fontFamily: 'Verdana, sans-serif',
-              borderColor: '#BF3C3D',
-              borderRadius: '5px',
-              padding: '30px 30px',
-            }}
-          >
-            {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'Partner with us'}
-          </button>
-        </div>          
         </form>
       </div>
     </div>
