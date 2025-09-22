@@ -169,7 +169,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col items-center ">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-1">
+      <div className="max-w-md w-full bg-white">
         <div className="flex items-center mb-6">
           <button
             onClick={onBack}
@@ -354,10 +354,24 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
           <button
             type="submit"
             disabled={loading || success}
-            className="w-full py-3 bg-[#d02c37] text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
+            className="
+              w-full
+              py-3
+              bg-[#d02c37]
+              text-white
+              rounded-lg
+              font-bold
+              transition-all duration-150
+              disabled:opacity-50
+              hover:bg-black
+              hover:text-white
+              hover:font-normal
+            "
+            style={{ fontFamily: "Verdana, sans-serif" }}
           >
             {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
           </button>
+
         </form>
       </div>
     </div>
