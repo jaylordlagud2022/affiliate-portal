@@ -356,7 +356,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             disabled={loading || success}
             className="w-full py-3 bg-[#d02c37] text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
           >
-            {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "SUBMIT APPLICATION"}
+            {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
           </button>
         </form>
       </div>
