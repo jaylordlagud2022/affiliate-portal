@@ -100,7 +100,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         // 📌 Register Layout (70/30)
         <div className="flex flex-row mt-6 gap-6">
           {/* 70% Left Section */}
-          <div className="w-[60%]">
+          <div className="w-[50%]">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Join the Property Investors Affiliate Hub.
             </h3>
@@ -143,7 +143,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
 
           {/* 30% Register Form */}
-          <div className="w-[40%] flex flex-col items-center justify-start">
+          <div className="w-[50%] flex flex-col items-center justify-start">
             <div className="w-full">
               <RegisterPage onBack={() => setStep('login')} />
             </div>
@@ -153,7 +153,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         // 📌 Login + Verify Layout (70/30)
         <div className="flex flex-row mt-6 gap-6">
           {/* 70% Text Section */}
-          <div className="w-[60%]">
+          <div className="w-[50%]">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Affiliate Hub
             </h3>
@@ -172,7 +172,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
 
           {/* 30% Login/Verify Form */}
-          <div className="w-[40%] flex flex-col items-center justify-start">
+          <div className="w-[50%] flex flex-col items-center justify-start">
             <div className="bg-white rounded-lg p-6 shadow w-full">
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
