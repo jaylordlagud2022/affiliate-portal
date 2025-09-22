@@ -101,7 +101,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="flex flex-row mt-6 gap-6">
           {/* 70% Left Section */}
           <div className="w-[50%]">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <h3 className=" text-lg font-semibold text-gray-800 mb-4 " style={{ fontFamily: 'Verdana, sans-serif' }}>
               Join the Property Investors Affiliate Hub.
             </h3>
             <p
@@ -138,7 +138,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               className="text-gray-900 font-semibold"
               style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
             >
-              Register now to get started.
+             Partner with us to get started.
             </p>
           </div>
 
