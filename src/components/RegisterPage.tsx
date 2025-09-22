@@ -374,7 +374,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
                 borderRadius: '5px',
               }}
             >
-              <span className="font-bold hover:font-normal block text-center">
+              <span className="hover:font-normal block text-center">
                 {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'Partner with us'}
               </span>
             </button>
