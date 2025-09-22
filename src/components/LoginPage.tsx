@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AuthService from '../services/authService';
-import logo from '../assets/logo.png'; // adjust the path
+import logo from '../assets/logo.jpeg'; // adjust the path
 import RegisterPage from './RegisterPage';
 
 interface LoginPageProps {
@@ -61,21 +61,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       : 'Affiliate login';
 
   return (
-    <div className="w-[1235px] mx-auto px-1 flex flex-col mt-6">
+    <div className="w-[1235px]  mx-auto px-1 flex flex-col mt-6">
       {/* Header */}
-      <div className="flex flex-col h-[100px] justify-center">
-        <div className="flex items-center space-x-3">
+      <div className="w-full bg-white">
+        {/* Header */}
+        <div className="w-[1235px] mx-auto flex items-center h-[90px]">
           <img
             src={logo}
             alt="Property Investors Logo"
-            className="w-8 h-8 object-contain"
+            className="h-[79px] w-auto object-contain" // keeps proportions
+             style={{ marginLeft: "-36px" }}
           />
-          <h1
-            className="text-xl font-bold text-gray-800"
-            style={{ fontSize: '50px', letterSpacing: '-2.7px' }}
-          >
-            Property Investors
-          </h1>
         </div>
       </div>
 
