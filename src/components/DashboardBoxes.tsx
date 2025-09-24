@@ -145,13 +145,13 @@ const DashboardBoxes = () => {
   const getIcon = (key: string) => {
     switch (key) {
       case "leads":
-        return <UserPlus className="w-10 h-10 text-[#d02c37] mb-2" />;
+        return <UserPlus className="w-16 h-16 text-[#d02c37] mb-2" />;
       case "pipeline":
-        return <TrendingUp className="w-10 h-10 text-[#d02c37] mb-2" />;
+        return <TrendingUp className="w-16 h-16 text-[#d02c37] mb-2" />;
       case "commissions":
-        return <Gift className="w-10 h-10 text-[#d02c37] mb-2" />;
+        return <Gift className="w-16 h-16 text-[#d02c37] mb-2" />;
       case "news":
-        return <Newspaper className="w-10 h-10 text-white mb-2" />;
+        return <Newspaper className="w-16 h-16 text-white mb-2" />;
       default:
         return null;
     }
