@@ -76,12 +76,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           </svg>
         </button>
 
-        <h2 className="text-2xl md:text-3xl font-bold tracking-wide px-3">
-          <b>Property Investors.</b>
+        <h2
+          style={{
+            fontFamily: '"Maven Pro", sans-serif',
+            fontSize: '2.7em',
+            fontWeight: 300,
+            lineHeight: '1.2em',
+            letterSpacing: '-2.7px',
+            color: '#FFFFFF',
+          }}
+        >
+          <span style={{ fontWeight: 500 }}>Property investors.</span>{' '}
+          <span>{bannerTitles[currentPage]}.</span>
         </h2>
-        <h2 className="text-2xl md:text-3xl tracking-wide">
-          {bannerTitles[currentPage]}
-        </h2>
+
       </div>
       <hr className="w-[100%] mx-auto border-black" />
 
