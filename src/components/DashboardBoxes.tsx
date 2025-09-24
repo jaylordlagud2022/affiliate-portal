@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
+import { UserPlus, TrendingUp, Gift, Newspaper } from "lucide-react"; // icons
 
 const DashboardBoxes = () => {
   const [data, setData] = useState<
@@ -109,15 +110,11 @@ const DashboardBoxes = () => {
     }
   };
 
-  // Open modal and sort data by date descending
+  // Open modal and sort data
   const openModal = (type: "leads" | "pipeline" | "commissions") => {
     setModalType(type);
     setModalTitle(
-      type === "leads"
-        ? "Prospects"
-        : type === "pipeline"
-        ? "Opportunities"
-        : "Your rewards"
+      type === "leads" ? "Prospects" : type === "pipeline" ? "Opportunities" : "Your rewards"
     );
     setIsModalOpen(true);
     setModalLoading(true);
@@ -144,87 +141,63 @@ const DashboardBoxes = () => {
     }, 300);
   };
 
+  // Choose correct icon
+  const getIcon = (key: string) => {
+    switch (key) {
+      case "leads":
+        return <UserPlus className="w-10 h-10 text-[#d02c37] mb-2" />;
+      case "pipeline":
+        return <TrendingUp className="w-10 h-10 text-[#d02c37] mb-2" />;
+      case "commissions":
+        return <Gift className="w-10 h-10 text-[#d02c37] mb-2" />;
+      case "news":
+        return <Newspaper className="w-10 h-10 text-white mb-2" />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="p-4">
-      {/* Dashboard Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-        {data.map((box, index) => {
-          if (box.key === "news") {
-            return (
-              <div
-                key={index}
-                className="bg-[#d02c37] text-[#EFEFEF] rounded-2xl shadow-lg cursor-not-allowed flex flex-col items-center justify-center h-40"
-              >
-                {/* Title centered */}
-                <span className="text-2xl font-bold mb-2 text-center">
-                  {box.title}
-                </span>
-
-                {/* Coming soon centered */}
-                <span className="text-lg font-medium text-center">
-                  {box.value}
-                </span>
-              </div>
-            );
-          }
-
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+      {data.map((box, index) => {
+        if (box.key === "news") {
           return (
             <div
               key={index}
-              className="bg-[#EFEFEF] text-[#d02c37] p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+              className="bg-[#d02c37] text-white rounded-xl shadow-lg flex flex-col items-center justify-center w-full h-64"
+            >
+              {getIcon(box.key)}
+              <span className="text-xl font-bold text-center">{box.title}</span>
+              <span className="text-md text-center mt-1">{box.value}</span>
+            </div>
+          );
+        }
+
+        return (
+          <div
+            key={index}
+            className="bg-white border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition"
+          >
+            {getIcon(box.key)}
+            <span className="text-xl font-bold text-center mb-2">{box.title}</span>
+            <span className="text-lg text-center mb-4">
+              {loading ? "Loading..." : box.value}
+            </span>
+            <button
               onClick={() => {
                 if (box.key === "leads") openModal("leads");
                 if (box.key === "pipeline") openModal("pipeline");
                 if (box.key === "commissions") openModal("commissions");
               }}
+              className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold">{box.title}</span>
-                <span className="text-2xl font-bold">
-                  {loading ? "Loading..." : box.value}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-
-      </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg max-w-4xl w-full">
-            <h2 className="text-2xl font-bold mb-4">{modalTitle}</h2>
-
-            {modalLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent"></div>
-                <span className="ml-3 text-lg font-medium text-gray-700">
-                  Loading...
-                </span>
-              </div>
-            ) : (
-              <DataTable
-                columns={getColumns(modalType)}
-                data={modalData}
-                pagination
-                highlightOnHover
-                striped
-                dense
-                noDataComponent={`No ${modalType} found`}
-              />
-            )}
-
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="mt-4 bg-[#d02c37] text-white px-4 py-2 rounded-lg"
-            >
-              Close
+              View
             </button>
           </div>
-        </div>
-      )}
+        );
+      })}
     </div>
+
   );
 };
 
