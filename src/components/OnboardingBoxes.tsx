@@ -28,7 +28,7 @@ const OnboardingBoxes = () => {
         {boxes.map((box, index) => (
           <div
             key={index}
-            className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105 flex items-center justify-center text-2xl font-bold"
+            className="bg-[#EFEFEF] text-[#d02c37] p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105 flex items-center justify-center text-2xl font-bold"
             onClick={() => openModal(box.video)}
           >
             {box.title}

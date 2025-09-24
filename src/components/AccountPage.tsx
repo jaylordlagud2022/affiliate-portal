@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import Navigation from './Navigation';
-import AffiliatePortalSidebar from './AffiliatePortalSidebar';
-import profileImage from '../assets/profile-placeholder.png';
+import React, { useState, useEffect } from "react";
+import Navigation from "./Navigation";
+import AffiliatePortalSidebar from "./AffiliatePortalSidebar";
+import profileImage from "../assets/profile-placeholder.png";
 
-type PageType = 'portal' | 'marketing' | 'dashboard' | 'account' | 'affiliate';
+type PageType = "portal" | "marketing" | "dashboard" | "account" | "affiliate";
 
 const formatABN = (value: string) => {
-  const digits = value.replace(/\D/g, '');
+  const digits = value.replace(/\D/g, "");
   return digits
-    .replace(/^(\d{2})(\d)/, '$1 $2')
-    .replace(/^(\d{2}) (\d{3})(\d)/, '$1 $2 $3')
-    .replace(/^(\d{2}) (\d{3}) (\d{3})(\d)/, '$1 $2 $3 $4')
+    .replace(/^(\d{2})(\d)/, "$1 $2")
+    .replace(/^(\d{2}) (\d{3})(\d)/, "$1 $2 $3")
+    .replace(/^(\d{2}) (\d{3}) (\d{3})(\d)/, "$1 $2 $3 $4")
     .substring(0, 14);
 };
 
@@ -19,51 +19,53 @@ interface AccountPageProps {
 }
 
 const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
-  const [currentPage, setCurrentPage] = useState<PageType>('account');
+  const [currentPage, setCurrentPage] = useState<PageType>("account");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    businessName: '',
-    abn: '',
-    website: '',
-    suburb: '',
-    state: '',
-    postcode: '',
-    profileImage: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    businessName: "",
+    abn: "",
+    website: "",
+    suburb: "",
+    state: "",
+    postcode: "",
+    profileImage: ""
   });
 
   // ✅ Fetch user info
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     if (!token) {
       setLoading(false);
       return;
     }
 
-    fetch(`https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`)
+    fetch(
+      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data && data.data.hubspot) {
           const hub = data.data.hubspot;
           setFormData((prev) => ({
             ...prev,
-            firstName: hub.firstname || '',
-            lastName: hub.lastname || '',
-            email: hub.email || '',
-            phone: hub.mobilephone || '',
-            businessName: hub.company || '',
-            abn: hub.abn ? formatABN(hub.abn) : '',
-            website: hub.website || '',
-            suburb: '',
-            state: hub.state || '',
-            postcode: hub.zip || '',
-            profileImage: hub.profile_image_url || ''
+            firstName: hub.firstname || "",
+            lastName: hub.lastname || "",
+            email: hub.email || "",
+            phone: hub.mobilephone || "",
+            businessName: hub.company || "",
+            abn: hub.abn ? formatABN(hub.abn) : "",
+            website: hub.website || "",
+            suburb: "",
+            state: hub.state || "",
+            postcode: hub.zip || "",
+            profileImage: hub.profile_image_url || ""
           }));
         }
       })
@@ -74,7 +76,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value } = e.target;
-    if (name === 'abn') value = formatABN(value);
+    if (name === "abn") value = formatABN(value);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -91,13 +93,13 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
 
   const handleSave = () => {
     setIsEditing(false);
-    alert('Account updated successfully!');
+    alert("Account updated successfully!");
   };
 
   return (
     <div className="min-h-screen flex bg-white">
 
-      {/* ✅ Main Content */}
+      {/* Main Content */}
       <div className="flex-1 pt-16">
         <Navigation
           currentPage={currentPage}
@@ -106,20 +108,21 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
           onToggleSidebar={toggleSidebar}
         />
 
-        {/* Page Content */}
-        <div className="mx-auto">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="text-gray-500">Loading account information...</div>
           ) : (
             <>
-              <div className="bg-white rounded-lg shadow-sm">
+              <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold">Personal Information</h2>
                   <button
-                    onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                    onClick={() =>
+                      isEditing ? handleSave() : setIsEditing(true)
+                    }
                     className="px-4 py-2 bg-[#d02c37] text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    {isEditing ? 'Save Changes' : 'Edit'}
+                    {isEditing ? "Save Changes" : "Edit"}
                   </button>
                 </div>
 
@@ -312,7 +315,9 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
                 <h2 className="text-xl font-bold mb-4">Account Status</h2>
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                  <span className="text-green-700 font-medium">Active Affiliate</span>
+                  <span className="text-green-700 font-medium">
+                    Active Affiliate
+                  </span>
                 </div>
                 <p className="text-gray-600 mt-2">
                   Your account is active and approved for affiliate activities.
@@ -323,7 +328,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
         </div>
       </div>
 
-      {/* ✅ Mobile overlay */}
+      {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 lg:hidden"

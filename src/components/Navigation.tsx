@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, User } from 'lucide-react';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.jpeg';
 
 interface NavigationProps {
   currentPage: 'dashboard' | 'account' | 'affiliate' | 'marketing';
@@ -48,12 +48,17 @@ const Navigation: React.FC<NavigationProps> = ({
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white pt-6">
       <div className="font-maven w-[1235px] mx-auto px-1 py-4 flex items-center justify-between border-b border-black bg-white">
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img src={logo} alt="Property Investors Logo" className="w-8 h-8 object-contain" />
-          <h1 className="text-xl font-bold text-gray-800"  style={{fontSize: '50px' }}>Property Investors</h1>
+
+           <img
+             src={logo}
+             alt="Property Investors Logo"
+             className="h-[79px] w-auto object-contain " // keeps proportions
+              style={{ marginLeft: "-36px" }}
+           />
         </div>
 
         {/* Right section */}

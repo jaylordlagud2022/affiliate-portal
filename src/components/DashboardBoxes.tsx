@@ -153,7 +153,7 @@ const DashboardBoxes = () => {
             return (
               <div
                 key={index}
-                className="bg-gray-300 text-gray-600 rounded-2xl shadow-lg cursor-not-allowed flex flex-col items-center justify-center h-40"
+                className="bg-[#d02c37] text-[#EFEFEF] rounded-2xl shadow-lg cursor-not-allowed flex flex-col items-center justify-center h-40"
               >
                 {/* Title centered */}
                 <span className="text-2xl font-bold mb-2 text-center">
@@ -171,7 +171,7 @@ const DashboardBoxes = () => {
           return (
             <div
               key={index}
-              className="bg-[#d02c37] text-white p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+              className="bg-[#EFEFEF] text-[#d02c37] p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105"
               onClick={() => {
                 if (box.key === "leads") openModal("leads");
                 if (box.key === "pipeline") openModal("pipeline");

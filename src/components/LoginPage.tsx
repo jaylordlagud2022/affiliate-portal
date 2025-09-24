@@ -174,6 +174,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
           {/* 30% Login/Verify Form */}
           <div className="w-[50%] flex flex-col items-center justify-start">
+            {/* ✅ Existing Affiliate Button */}
+ 
+              <div className="w-full flex justify-start mb-2">
+                <button
+                  onClick={() => setStep('login')}
+                  className="text-lg font-semibold text-gray-800"
+                >
+                  Existing Affiliate?
+                </button>
+              </div>
+    
             <div className="bg-white rounded-lg p-6 shadow w-full">
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
