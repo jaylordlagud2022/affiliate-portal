@@ -167,8 +167,8 @@ const DashboardBoxes = () => {
               className="bg-[#d02c37] text-white rounded-xl shadow-lg flex flex-col items-center justify-center w-full h-64"
             >
               {getIcon(box.key)}
-              <span className="text-xl font-bold text-center">{box.title}</span>
-              <span className="text-md text-center mt-1">{box.value}</span>
+              <span className="text-[2em] font-bold text-center">{box.title}</span>
+              <span className="text-[1.5em] text-center mt-1">{box.value}</span>
             </div>
           );
         }
@@ -176,11 +176,11 @@ const DashboardBoxes = () => {
         return (
           <div
             key={index}
-            className="bg-white border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition"
+            className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition"
           >
             {getIcon(box.key)}
-            <span className="text-xl font-bold text-center mb-2">{box.title}</span>
-            <span className="text-lg text-center mb-4">
+            <span className="text-[2em] font-bold text-center mb-2">{box.title}</span>
+            <span className="text-[1.5em] text-center mb-4">
               {loading ? "Loading..." : box.value}
             </span>
             <button

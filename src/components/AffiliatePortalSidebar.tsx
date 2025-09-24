@@ -26,7 +26,7 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
   return (
     <aside
       className={`
-        side-bar-portal bg-white w-64 h-full shadow-md
+        side-bar-portal bg-white w-80 h-full shadow-md
         ${isOpen ? 'z-30' : 'z-80'}
         transform transition-transform duration-300 ease-in-out
         fixed top-0 left-0
