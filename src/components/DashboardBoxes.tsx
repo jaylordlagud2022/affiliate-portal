@@ -145,13 +145,13 @@ const DashboardBoxes = () => {
   const getIcon = (key: string) => {
     switch (key) {
       case "leads":
-        return <UserPlus className="w-16 h-16 text-[#d02c37] mb-2" />;
+        return <UserPlus className="w-[65px] h-[65px] text-[#d02c37] mb-2" />;
       case "pipeline":
-        return <TrendingUp className="w-16 h-16 text-[#d02c37] mb-2" />;
+        return <TrendingUp className="w-[65px] h-[65px] text-[#d02c37] mb-2" />;
       case "commissions":
-        return <Gift className="w-16 h-16 text-[#d02c37] mb-2" />;
+        return <Gift className="w-[65px] h-[65px] text-[#d02c37] mb-2" />;
       case "news":
-        return <Newspaper className="w-16 h-16 text-white mb-2" />;
+        return <Newspaper className="w-[65px] h-[65px] text-white mb-2" />;
       default:
         return null;
     }
@@ -167,7 +167,7 @@ const DashboardBoxes = () => {
               className="bg-[#d02c37] text-white rounded-xl shadow-lg flex flex-col items-center justify-center w-full h-64"
             >
               {getIcon(box.key)}
-              <span className="text-[2em] font-bold text-center">{box.title}</span>
+              <span className="tracking-[-2.7px] text-[2em] font-bold text-center">{box.title}</span>
               <span className="text-[1.5em] text-center mt-1">{box.value}</span>
             </div>
           );
@@ -176,11 +176,11 @@ const DashboardBoxes = () => {
         return (
           <div
             key={index}
-            className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition"
+            className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition leading-[25px]"
           >
             {getIcon(box.key)}
-            <span className="text-[2em] font-bold text-center mb-2">{box.title}</span>
-            <span className="text-[1.5em] text-center mb-4">
+            <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">{box.title}</span>
+            <span className="text-[1.5em] text-center mb-1">
               {loading ? "Loading..." : box.value}
             </span>
             <button
@@ -189,7 +189,7 @@ const DashboardBoxes = () => {
                 if (box.key === "pipeline") openModal("pipeline");
                 if (box.key === "commissions") openModal("commissions");
               }}
-              className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition"
+              className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]"
             >
               View
             </button>
