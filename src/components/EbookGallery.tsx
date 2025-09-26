@@ -85,13 +85,19 @@ const EbookGallery: React.FC = () => {
         {ebooks.map((ebook) => (
           <div
             key={ebook.id}
-            className="bg-[#d02c37] text-white rounded-xl shadow-lg cursor-pointer 
-                       transition-transform transform hover:scale-105 
-                       flex items-center justify-center text-center 
-                       h-64 p-4 font-semibold"
+            className="cursor-pointer rounded-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105"
             onClick={() => setSelectedEbook(ebook)}
           >
-            {ebook.name}
+            {/* Thumbnail image */}
+            <img
+              src={`${ebook.url}/medium.jpg`}
+              alt={ebook.name}
+              className="w-full h-64 object-cover"
+              onError={(e) => {
+                
+              }}
+            />
+            <div className="p-2 text-center font-semibold">{ebook.name}</div>
           </div>
         ))}
       </div>

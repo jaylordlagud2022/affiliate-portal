@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import { UserPlus, TrendingUp, Gift, Newspaper } from "lucide-react"; // icons
+import { UserPlus, TrendingUp, Gift, Newspaper, X } from "lucide-react"; // added X for close icon
 
 const DashboardBoxes = () => {
   const [data, setData] = useState<
@@ -66,7 +66,6 @@ const DashboardBoxes = () => {
     fetchData();
   }, [token]);
 
-  // Define DataTable columns dynamically
   const getColumns = (type: "leads" | "pipeline" | "commissions") => {
     if (type === "leads") {
       return [
@@ -110,7 +109,6 @@ const DashboardBoxes = () => {
     }
   };
 
-  // Open modal and sort data
   const openModal = (type: "leads" | "pipeline" | "commissions") => {
     setModalType(type);
     setModalTitle(
@@ -141,7 +139,6 @@ const DashboardBoxes = () => {
     }, 300);
   };
 
-  // Choose correct icon
   const getIcon = (key: string) => {
     switch (key) {
       case "leads":
@@ -158,46 +155,78 @@ const DashboardBoxes = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-      {data.map((box, index) => {
-        if (box.key === "news") {
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+        {data.map((box, index) => {
+          if (box.key === "news") {
+            return (
+              <div
+                key={index}
+                className="bg-[#d02c37] text-white rounded-xl shadow-lg flex flex-col items-center justify-center w-full h-64"
+              >
+                {getIcon(box.key)}
+                <span className="tracking-[-2.7px] text-[2em] font-bold text-center">{box.title}</span>
+                <span className="text-[1.5em] text-center mt-1">{box.value}</span>
+              </div>
+            );
+          }
+
           return (
             <div
               key={index}
-              className="bg-[#d02c37] text-white rounded-xl shadow-lg flex flex-col items-center justify-center w-full h-64"
+              className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition leading-[25px]"
             >
               {getIcon(box.key)}
-              <span className="tracking-[-2.7px] text-[2em] font-bold text-center">{box.title}</span>
-              <span className="text-[1.5em] text-center mt-1">{box.value}</span>
+              <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">{box.title}</span>
+              <span className="text-[1.5em] text-center mb-1">
+                {loading ? "Loading..." : box.value}
+              </span>
+              <button
+                onClick={() => {
+                  if (box.key === "leads") openModal("leads");
+                  if (box.key === "pipeline") openModal("pipeline");
+                  if (box.key === "commissions") openModal("commissions");
+                }}
+                className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]"
+              >
+                View
+              </button>
             </div>
           );
-        }
+        })}
+      </div>
 
-        return (
-          <div
-            key={index}
-            className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition leading-[25px]"
-          >
-            {getIcon(box.key)}
-            <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">{box.title}</span>
-            <span className="text-[1.5em] text-center mb-1">
-              {loading ? "Loading..." : box.value}
-            </span>
-            <button
-              onClick={() => {
-                if (box.key === "leads") openModal("leads");
-                if (box.key === "pipeline") openModal("pipeline");
-                if (box.key === "commissions") openModal("commissions");
-              }}
-              className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]"
-            >
-              View
-            </button>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full p-6 relative">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">{modalTitle}</h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-500 hover:text-black"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Body */}
+            {modalLoading ? (
+              <div className="text-center py-6">Loading...</div>
+            ) : (
+              <DataTable
+                columns={getColumns(modalType)}
+                data={modalData}
+                pagination
+                highlightOnHover
+                striped
+              />
+            )}
           </div>
-        );
-      })}
-    </div>
-
+        </div>
+      )}
+    </>
   );
 };
 
