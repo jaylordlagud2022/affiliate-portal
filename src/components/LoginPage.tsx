@@ -163,13 +163,23 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
             >
               Our Affiliate Program is designed to create strong, long-term
-              business partnerships built on trust and shared success. We work
-              closely with our affiliates to provide the tools, resources, and
-              support needed to grow together. With access to an exclusive hub,
+              business partnerships built on trust and shared success.
+            </p>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            > We work closely with our affiliates to provide the tools, resources, and
+              support needed to grow together.
+            </p>
+            <p
+              className="text-gray-700 mb-3"
+              style={{ fontFamily: 'Verdana, sans-serif', fontSize: '16px' }}
+            > With access to an exclusive hub,
               direct communication with your dedicated sales representative,
               you’ll always have what you need to succeed and strengthen the
               relationship between our businesses.
             </p>
+
 
           </div>
 
