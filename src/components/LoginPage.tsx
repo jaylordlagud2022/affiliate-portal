@@ -240,7 +240,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             {/* Create Account */}
             {step !== 'verify' && (
               <div className="mt-6 text-center">
-                <p className="text-gray-700 text-sm">
+                <p className="text-gray-700 text-sm" style={{fontSize: '1.3em'}}>
                   Looking to partner with us?{' '}
                   <button
                     onClick={() => setStep('register')}
