@@ -190,7 +190,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               <div className="w-full flex justify-start mb-2">
                 <button
                   onClick={() => setStep('login')}
-                  className="text-lg font-semibold text-gray-800"
+                  className="text-lg font-semibold text-gray-800" style={{ fontFamily: 'Verdana, sans-serif' }}
                 >
                   Existing Affiliate?
                 </button>
@@ -251,7 +251,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             {/* Create Account */}
             {step !== 'verify' && (
               <div className="mt-6 text-center">
-                <p className="text-gray-700 text-sm" style={{fontSize: '1.3em'}}>
+                <p className="text-gray-700 text-sm" style={{fontSize: '1.3em' , fontFamily: 'Verdana, sans-serif'}}>
                   Looking to partner with us?{' '}
                   <button
                     onClick={() => setStep('register')}
