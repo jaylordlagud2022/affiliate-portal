@@ -155,8 +155,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="flex flex-row mt-6 gap-6">
           {/* 70% Text Section */}
           <div className="w-[50%]">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Affiliate Hub
+<h3 className=" text-lg font-semibold text-gray-800 mb-4 " style={{ fontFamily: 'Verdana, sans-serif' }}>
+              Affiliate Hub.
             </h3>
             <p
               className="text-gray-700 mb-3"
@@ -170,6 +170,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               you’ll always have what you need to succeed and strengthen the
               relationship between our businesses.
             </p>
+
           </div>
 
           {/* 30% Login/Verify Form */}
