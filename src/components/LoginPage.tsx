@@ -57,7 +57,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     step === 'register'
       ? 'Affiliate register'
       : step === 'verify'
-      ? 'AFFILIATE VERIFY'
+      ? 'Affiliate verify'
       : 'Affiliate login';
 
   return (
