@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BronzeImg from "../assets/03 House Bronze.png";
 import SilverImg from "../assets/03 House Silver.png";
 import GoldImg from "../assets/03 House Gold.png";
@@ -8,9 +8,31 @@ import SmallHouseActiveImg from "../assets/06 House Company Red.png";
 import logo from "../assets/logo.png"; // ✅ icon for rewards list
 
 const AffiliateActivity: React.FC = () => {
-  const [num] = useState(5); // ✅ number of active including big houses
-
+  const [num, setNum] = useState(2); // ✅ base value is 2
   const token = localStorage.getItem("authToken");
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchCommissions = async () => {
+      try {
+        const res = await fetch(
+          `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
+        );
+        const data = await res.json();
+
+        // ✅ num = 2 + count of items
+        setNum(2 + (Array.isArray(data) ? data.length : 0));
+        
+         console.log("fetching commissions:",  data.length);
+      } catch (error) {
+        console.error("Error fetching commissions:", error);
+      }
+    };
+
+    fetchCommissions();
+  }, [token]);
+
   if (!token) return null;
 
   /** Render small houses dynamically */

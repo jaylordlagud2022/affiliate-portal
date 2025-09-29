@@ -25,6 +25,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [abnStatus, setAbnStatus] = useState<string>(""); // ✅ track status
 
   // Format ABN as 11 digits => "12 345 678 901"
   const formatABN = (value: string) => {
@@ -43,7 +44,22 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
         const data = await res.json();
 
         if (res.ok && data?.entity_name) {
-          // ✅ Valid ABN
+          if (data.status && data.status.toLowerCase() !== "active") {
+            // ❌ ABN exists but not active
+            setFormErrors((prev) => ({
+              ...prev,
+              abn: `ABN is not active (Status: ${data.status})`,
+            }));
+            setFormData((prev) => ({
+              ...prev,
+              abn: value,
+              company: data.entity_name || "",
+            }));
+            setAbnStatus(data.status);
+            return;
+          }
+
+          // ✅ Valid active ABN
           setFormData((prev) => ({
             ...prev,
             abn: value,
@@ -52,19 +68,23 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             postcode: data.postcode || prev.postcode,
           }));
           setFormErrors((prev) => ({ ...prev, abn: "" }));
+          setAbnStatus("Active");
         } else {
           // ❌ Invalid ABN
           setFormErrors((prev) => ({ ...prev, abn: "Invalid ABN" }));
           setFormData((prev) => ({ ...prev, abn: value, company: "" }));
+          setAbnStatus("");
         }
       } catch {
         setFormErrors((prev) => ({ ...prev, abn: "Invalid ABN" }));
         setFormData((prev) => ({ ...prev, abn: value, company: "" }));
+        setAbnStatus("");
       }
     } else {
       // Reset if not 11 digits yet
       setFormErrors((prev) => ({ ...prev, abn: "" }));
       setFormData((prev) => ({ ...prev, abn: value, company: "" }));
+      setAbnStatus("");
     }
   };
 
@@ -90,6 +110,14 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
+    if (!formData.company) errors.company = "Company name is required";
+
+    const abnDigits = formData.abn.replace(/\s/g, "");
+    if (abnDigits.length !== 11) errors.abn = "ABN must be 11 digits";
+    if (abnStatus && abnStatus.toLowerCase() !== "active") {
+      errors.abn = `ABN is not active (Status: ${abnStatus})`;
+    }
+
     if (!formData.firstName) errors.firstName = "First name is required";
     if (!formData.lastName) errors.lastName = "Last name is required";
     if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, "")))
@@ -100,10 +128,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     if (!formData.state) errors.state = "State is required";
     if (!/^\d{4}$/.test(formData.postcode))
       errors.postcode = "Enter a valid 4-digit postcode";
-    if (!formData.company) errors.company = "Company name is required";
-
-    const abnDigits = formData.abn.replace(/\s/g, "");
-    if (abnDigits.length !== 11) errors.abn = "ABN must be 11 digits";
 
     try {
       new URL(formData.website);
@@ -192,6 +216,39 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* ABN first */}
+          <div>
+            <input
+              type="text"
+              name="abn"
+              value={formData.abn}
+              onChange={handleChange}
+              placeholder="ABN (11 digits)"
+              className={inputClass("abn")}
+              disabled={loading}
+            />
+            {formErrors.abn && (
+              <p className="text-xs text-red-600">{formErrors.abn}</p>
+            )}
+          </div>
+
+          {/* Company (readonly after ABN lookup) */}
+          <div>
+            <input
+              type="text"
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              placeholder="Company"
+              className={inputClass("company")}
+              readOnly={!!formData.company}
+              disabled={loading}
+            />
+            {formErrors.company && (
+              <p className="text-xs text-red-600">{formErrors.company}</p>
+            )}
+          </div>
+
           {/* First + Last Name */}
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -302,39 +359,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
           </div>
 
-          {/* Company (readonly after ABN lookup) */}
-          <div>
-            <input
-              type="text"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              placeholder="Company"
-              className={inputClass("company")}
-              readOnly={!!formData.company} // ✅ readonly if set
-              disabled={loading}
-            />
-            {formErrors.company && (
-              <p className="text-xs text-red-600">{formErrors.company}</p>
-            )}
-          </div>
-
-          {/* ABN */}
-          <div>
-            <input
-              type="text"
-              name="abn"
-              value={formData.abn}
-              onChange={handleChange}
-              placeholder="ABN (11 digits)"
-              className={inputClass("abn")}
-              disabled={loading}
-            />
-            {formErrors.abn && (
-              <p className="text-xs text-red-600">{formErrors.abn}</p>
-            )}
-          </div>
-
           {/* Website */}
           <div>
             <input
@@ -350,6 +374,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
               <p className="text-xs text-red-600">{formErrors.website}</p>
             )}
           </div>
+
+          {/* Submit */}
           <div className="flex justify-center">
             <button
               type="submit"
@@ -366,20 +392,19 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
                 hover:text-white
                 hover:underline
                 px-10 py-6
-                min-w-[280px]   /* ✅ lock minimum width */
+                min-w-[280px]
               "
               style={{
                 fontFamily: '"Maven Pro", sans-serif',
-                borderColor: '#BF3C3D',
-                borderRadius: '5px',
+                borderColor: "#BF3C3D",
+                borderRadius: "5px",
               }}
             >
               <span className="hover:font-normal block text-center">
-                {loading ? 'SUBMITTING...' : success ? 'SUCCESS!' : 'Partner with us'}
+                {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
               </span>
             </button>
           </div>
-
         </form>
       </div>
     </div>
