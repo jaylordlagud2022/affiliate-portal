@@ -19,12 +19,14 @@ const AffiliateActivity: React.FC = () => {
         const res = await fetch(
           `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-commissions?token=${token}`
         );
-        const data = await res.json();
+        const result = await res.json();
 
-        // ✅ num = 2 + count of items
-        setNum(2 + (Array.isArray(data) ? data.length : 0));
-        
-         console.log("fetching commissions:",  data.length);
+        // ✅ Check inside `result.data`
+        const commissions = Array.isArray(result.data) ? result.data : [];
+
+        setNum(2 + commissions.length);
+
+        console.log("fetching commissions:", commissions.length);
       } catch (error) {
         console.error("Error fetching commissions:", error);
       }
@@ -32,6 +34,7 @@ const AffiliateActivity: React.FC = () => {
 
     fetchCommissions();
   }, [token]);
+
 
   if (!token) return null;
 
