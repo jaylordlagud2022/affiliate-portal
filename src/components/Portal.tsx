@@ -5,7 +5,7 @@ import MarketingBoxes from "./MarketingBoxes";
 import OnboardingBoxes from "./OnboardingBoxes";
 import AccountPage from "./AccountPage";
 import AffiliateActivity from "./AffiliateActivity";
-import ChatPopup from "./ChatPopup";
+ import ChatPopup from "./HubspotChat";
 
 type PageType =
   | "portal"
@@ -137,7 +137,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       </div>
 
       {/* ✅ Role-based Chat */}
-      {role === "lead" && <ChatPopup userEmail="user1@example.com"/>}
+      {<ChatPopup/>}
     </div>
   );
 };
