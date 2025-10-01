@@ -58,7 +58,7 @@ const AffiliateActivity: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 font-sans bg-white">
+    <div className="min-h-screen font-sans bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Status Reward */}
         <h3 className="text-2xl font-bold text-gray-700 mb-6 pb-3">
@@ -76,7 +76,7 @@ const AffiliateActivity: React.FC = () => {
                 <img
                   src={BronzeImg}
                   alt="Bronze"
-                  className={`w-20 h-20 ${num >= 0 ? "opacity-100" : "opacity-40"}`}
+                  className={`w-20 h-20 ${num >= 0 ? "opacity-100" : ""}`}
                 />
                 <div className="flex gap-2 relative">
                   <span className="absolute -top-5 left-0 w-full text-xs text-red-600 font-medium text-left">
@@ -100,7 +100,7 @@ const AffiliateActivity: React.FC = () => {
               <img
                 src={SilverImg}
                 alt="Silver"
-                className={`w-20 h-20 ${num >= 5 ? "opacity-100" : "opacity-40"}`}
+                className={`w-20 h-20 ${num >= 5 ? "opacity-100" : ""}`}
               />
               <div className="flex gap-2">
                 {/* Silver smalls = 6–9 */}
@@ -112,13 +112,13 @@ const AffiliateActivity: React.FC = () => {
             {/* Silver reward card */}
             <div className="mt-4 w-full max-w-xs">
               <div className="text-center">
-                <button className="bg-gray-400 text-white px-4 py-2 rounded-full font-semibold">
+                <button className="bg-[#C0C0C0] text-white px-4 py-2 rounded-full font-semibold">
                   Obtain Silver Rewards
                 </button>
                 <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
                   <li className="flex items-center gap-2">
                     <img src={logo} alt="x" className="w-4 h-4" />
-                    $1000 BONUS reward travel vouchers
+                    $1000 reward travel vouchers
                   </li>
                   <li className="flex items-center gap-2">
                     <img src={logo} alt="x" className="w-4 h-4" />
@@ -140,7 +140,7 @@ const AffiliateActivity: React.FC = () => {
               <img
                 src={GoldImg}
                 alt="Gold"
-                className={`w-20 h-20 ${num >= 9 ? "opacity-100" : "opacity-40"}`}
+                className={`w-20 h-20 ${num >= 9 ? "opacity-100" : ""}`}
               />
               <div className="flex gap-2">
                 {/* Gold smalls = 10–13 */}
@@ -152,13 +152,13 @@ const AffiliateActivity: React.FC = () => {
             {/* Gold reward card */}
             <div className="mt-4 w-full max-w-xs">
               <div className="text-center">
-                <button className="bg-yellow-600 text-white px-4 py-2 rounded-full font-semibold">
+                <button className="bg-[#E5B80B] text-white px-4 py-2 rounded-full font-semibold">
                   Obtain Gold Rewards
                 </button>
                 <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
                   <li className="flex items-center gap-2">
                     <img src={logo} alt="x" className="w-4 h-4" />
-                    $2000 BONUS reward travel vouchers
+                    $2000 Reward travel vouchers
                   </li>
                   <li className="flex items-center gap-2">
                     <img src={logo} alt="x" className="w-4 h-4" />
@@ -180,7 +180,7 @@ const AffiliateActivity: React.FC = () => {
                 <img
                   src={PlatinumImg}
                   alt="Platinum"
-                  className={`w-20 h-20 ${num >= 13 ? "opacity-100" : "opacity-40"}`}
+                  className={`w-20 h-20 ${num >= 13 ? "opacity-100" : ""}`}
                 />
                 <div className="flex gap-2">
                   {/* Platinum smalls = 14–17 */}
@@ -194,13 +194,13 @@ const AffiliateActivity: React.FC = () => {
               {/* Platinum reward card */}
               <div className="mt-4 w-full max-w-xs">
                 <div className="text-center">
-                  <button className="bg-purple-600 text-white px-4 py-2 rounded-full font-semibold">
+                  <button className="bg-[#979392] text-white px-4 py-2 rounded-full font-semibold">
                     Obtain Platinum Rewards
                   </button>
                   <ul className="mt-4 space-y-2 text-gray-700 text-left text-[12px]">
                     <li className="flex items-center gap-2">
                       <img src={logo} alt="x" className="w-4 h-4" />
-                      $3000 BONUS reward travel vouchers
+                      $3000 Reward travel vouchers
                     </li>
                     <li className="flex items-center gap-2">
                       <img src={logo} alt="x" className="w-4 h-4" />
