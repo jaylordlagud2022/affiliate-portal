@@ -15,6 +15,7 @@ const EbookGallery: React.FC = () => {
 
   // Example: token stored in localStorage after login
   const token = localStorage.getItem("authToken");
+  const senderEmail = localStorage.getItem("currentUserEmail"); // 👈 logged in user email
 
   // Load ebooks from WP API
   useEffect(() => {
@@ -37,6 +38,20 @@ const EbookGallery: React.FC = () => {
       });
   }, []);
 
+  const getLoggedInEmail = (): string | null => {
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        const hubspotData = parsed.hubspot || {};
+        return hubspotData.email || null;
+      } catch (e) {
+        console.error("❌ Error parsing currentUser:", e);
+      }
+    }
+    return null;
+  };
+
   const handleSend = () => {
     if (!selectedEbook || !receiver) return;
     if (!token) {
@@ -46,23 +61,28 @@ const EbookGallery: React.FC = () => {
 
     setSending(true);
 
-    fetch(
-      "https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/track-downloads",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: token,
-          file_id: selectedEbook.id,
-          file_name: selectedEbook.name,
-          receiver_email: receiver,
-        }),
-      }
-    )
+    const dateSent = new Date().toISOString();
+    const ebookSendId = `${selectedEbook.name}-${receiver}-${dateSent}`;
+
+    const payload = {
+      ebook_name: selectedEbook.name,
+      ebook_url: selectedEbook.url,
+      receiver_email: receiver,
+      sender_contact: getLoggedInEmail(), // 👈 you’ll look this up on the backend
+      date_sent: dateSent,
+      ebook_send_id: ebookSendId,
+    };
+
+    // 🔹 Replace later with your own API endpoint
+    fetch("https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/ebook-send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          alert(data.message || "Ebook sent!");
+          alert("Ebook send logged!");
           setReceiver("");
           setSelectedEbook(null);
         } else {
@@ -88,13 +108,12 @@ const EbookGallery: React.FC = () => {
             className="cursor-pointer rounded-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105"
             onClick={() => setSelectedEbook(ebook)}
           >
-            {/* Thumbnail image */}
             <img
               src={`${ebook.url}/medium.jpg`}
               alt={ebook.name}
               className="w-full h-64 object-cover"
               onError={(e) => {
-                
+                (e.target as HTMLImageElement).src = "/placeholder.png";
               }}
             />
             <div className="p-2 text-center font-semibold">{ebook.name}</div>
@@ -122,6 +141,7 @@ const EbookGallery: React.FC = () => {
               value={receiver}
               onChange={(e) => setReceiver(e.target.value)}
               className="border p-2 w-full mb-4 rounded"
+              required
             />
             <div className="flex justify-end gap-2">
               <button

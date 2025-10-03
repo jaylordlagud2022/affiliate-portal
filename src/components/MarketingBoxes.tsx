@@ -76,19 +76,24 @@ const MarketingBoxes = () => {
           {boxes.map((box) => (
             <div
               key={box.key}
-              className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition"
+              className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
               onClick={() => {
                 if (box.key === "refer") setShowReferModal(true);
                 if (box.key === "ebooks") setActiveView("ebooks");
+                if (box.key === "about") {
+                  const pdfUrl = "/About Property Investors 2025.pdf"; // must be in public/
+                  const link = document.createElement("a");
+                  link.href = pdfUrl;
+                  link.download = "About Property Investors 2025.pdf";
+                  link.click();
+                }
               }}
             >
               {box.icon}
               <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
                 {box.title}
               </span>
-              <button
-                className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]"
-              >
+              <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
                 Open
               </button>
             </div>
