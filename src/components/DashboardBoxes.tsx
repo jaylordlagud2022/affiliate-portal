@@ -156,6 +156,7 @@ const DashboardBoxes = () => {
 
   return (
     <>
+    <div className="p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         {data.map((box, index) => {
           if (box.key === "news") {
@@ -195,7 +196,7 @@ const DashboardBoxes = () => {
           );
         })}
       </div>
-
+    </div>
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
@@ -227,6 +228,7 @@ const DashboardBoxes = () => {
         </div>
       )}
     </>
+    
   );
 };
 

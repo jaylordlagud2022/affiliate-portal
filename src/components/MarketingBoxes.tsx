@@ -84,7 +84,7 @@ const MarketingBoxes = () => {
                   const pdfUrl = "/About Property Investors 2025.pdf"; // must be in public/
                   const link = document.createElement("a");
                   link.href = pdfUrl;
-                  link.download = "About Property Investors 2025.pdf";
+                  link.download = "Property-Investors.pdf";
                   link.click();
                 }
               }}
