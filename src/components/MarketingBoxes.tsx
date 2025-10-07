@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
 import EbookGallery from "./EbookGallery";
-import { UserPlus, Info, Share2, BookOpen, X } from "lucide-react";
+import {
+  UserPlus,
+  Info,
+  Share2,
+  BookOpen,
+  X,
+  Award,
+  MessageSquare,
+  Video,
+  User,
+} from "lucide-react";
 
 const MarketingBoxes = () => {
-  const [activeView, setActiveView] = useState<"home" | "ebooks">("home");
+  const [activeView, setActiveView] = useState<"home" | "ebooks" | "media">("home");
   const [showReferModal, setShowReferModal] = useState(false);
 
   const [boxes] = useState([
@@ -11,6 +21,13 @@ const MarketingBoxes = () => {
     { key: "about", title: "About Property Investors", icon: <Info className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
     { key: "media", title: "Sharable Media", icon: <Share2 className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
     { key: "ebooks", title: "eBooks", icon: <BookOpen className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
+  ]);
+
+  const [mediaBoxes] = useState([
+    { key: "success", title: "Success Studies", icon: <Award className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
+    { key: "testimonials", title: "Testimonials", icon: <MessageSquare className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
+    { key: "videos", title: "Video Content", icon: <Video className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
+    { key: "bio", title: "Consultant Bio", icon: <User className="w-[65px] h-[65px] text-[#d02c37] mb-2" /> },
   ]);
 
   // 🔑 Get logged-in email from localStorage
@@ -33,7 +50,6 @@ const MarketingBoxes = () => {
       const portalId = "46099113";
       const formId = "60609263-83bc-400b-a7eb-0c7f188d7bd4";
 
-      // Clear previous form if reopening
       const formContainer = document.getElementById("hubspotForm");
       if (formContainer) {
         formContainer.innerHTML = "";
@@ -70,7 +86,7 @@ const MarketingBoxes = () => {
 
   return (
     <div className="p-4">
-      {/* Dashboard Boxes */}
+      {/* Home View */}
       {activeView === "home" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           {boxes.map((box) => (
@@ -80,6 +96,7 @@ const MarketingBoxes = () => {
               onClick={() => {
                 if (box.key === "refer") setShowReferModal(true);
                 if (box.key === "ebooks") setActiveView("ebooks");
+                if (box.key === "media") setActiveView("media");
                 if (box.key === "about") {
                   const pdfUrl = "/About Property Investors 2025.pdf"; // must be in public/
                   const link = document.createElement("a");
@@ -101,19 +118,34 @@ const MarketingBoxes = () => {
         </div>
       )}
 
-      {/* Refer a Client Modal */}
-      {showReferModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg max-w-2xl w-full relative">
-            <button
-              onClick={() => setShowReferModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-black"
-            >
-              <X size={24} />
-            </button>
-            <div className="w-full flex items-center justify-center">
-              <div id="hubspotForm" className="w-full max-w-lg"></div>
-            </div>
+      {/* Sharable Media View */}
+      {activeView === "media" && (
+        <div className="relative">
+          <button
+            onClick={() => setActiveView("home")}
+            className="mb-6 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+          >
+            ← Back
+          </button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            {mediaBoxes.map((box) => (
+              <div
+                key={box.key}
+                className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
+                onClick={() => {
+                  alert(`Clicked on ${box.title}`);
+                }}
+              >
+                {box.icon}
+                <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
+                  {box.title}
+                </span>
+                <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                  Open
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -128,6 +160,23 @@ const MarketingBoxes = () => {
             ← Back
           </button>
           <EbookGallery />
+        </div>
+      )}
+
+      {/* Refer a Client Modal */}
+      {showReferModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-2xl w-full relative">
+            <button
+              onClick={() => setShowReferModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-black"
+            >
+              <X size={24} />
+            </button>
+            <div className="w-full flex items-center justify-center">
+              <div id="hubspotForm" className="w-full max-w-lg"></div>
+            </div>
+          </div>
         </div>
       )}
     </div>

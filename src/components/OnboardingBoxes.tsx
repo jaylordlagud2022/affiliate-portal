@@ -1,14 +1,31 @@
 import React, { useState } from "react";
+import { LayoutDashboard, Megaphone, UserCheck, Settings, X } from "lucide-react";
 
 const OnboardingBoxes = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   const [boxes] = useState([
-    { title: "Dashboard", video: "https://www.youtube.com/embed/tgbNymZ7vqY" },
-    { title: "Marketing", video: "https://www.youtube.com/embed/tgbNymZ7vqY" },
-    { title: "Partner Status", video: "https://www.youtube.com/embed/tgbNymZ7vqY" },
-    { title: "Account", video: "https://www.youtube.com/embed/tgbNymZ7vqY" },
+    {
+      title: "Dashboard",
+      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      icon: <LayoutDashboard className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
+    },
+    {
+      title: "Marketing",
+      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      icon: <Megaphone className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
+    },
+    {
+      title: "Partner Status",
+      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      icon: <UserCheck className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
+    },
+    {
+      title: "Account",
+      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      icon: <Settings className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
+    },
   ]);
 
   const openModal = (videoUrl: string) => {
@@ -23,29 +40,35 @@ const OnboardingBoxes = () => {
 
   return (
     <div className="p-4">
-      {/* Dashboard Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+      {/* Onboarding Boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         {boxes.map((box, index) => (
           <div
             key={index}
-            className="bg-[#EFEFEF] text-[#d02c37] p-12 rounded-2xl shadow-lg cursor-pointer transition-transform transform hover:scale-105 flex items-center justify-center text-2xl font-bold"
             onClick={() => openModal(box.video)}
+            className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
           >
-            {box.title}
+            {box.icon}
+            <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
+              {box.title}
+            </span>
+            <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+              Watch
+            </button>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Video Modal */}
       {showModal && activeVideo && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-4 sm:mx-auto relative">
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl"
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
             >
-              ✕
+              <X size={28} />
             </button>
 
             {/* Video Embed */}
