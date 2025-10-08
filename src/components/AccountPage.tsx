@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Navigation from "./Navigation";
-import AffiliatePortalSidebar from "./AffiliatePortalSidebar";
 import profileImage from "../assets/profile-placeholder.png";
 
 type PageType = "portal" | "marketing" | "dashboard" | "account" | "affiliate";
@@ -23,6 +22,11 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" | "" }>({
+    text: "",
+    type: "",
+  });
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -35,7 +39,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
     suburb: "",
     state: "",
     postcode: "",
-    profileImage: ""
+    profileImage: "",
   });
 
   // ✅ Fetch user info
@@ -65,7 +69,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
             suburb: "",
             state: hub.state || "",
             postcode: hub.zip || "",
-            profileImage: hub.profile_image_url || ""
+            profileImage: hub.profile_image_url || "",
           }));
         }
       })
@@ -91,14 +95,37 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
     }
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    alert("Account updated successfully!");
+  const handleSave = async () => {
+    setSaving(true);
+    setMessage({ text: "", type: "" });
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await fetch("https://api.propertyinvestors.com.au/wp-json/hubspot-api/v1/update-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          ...formData,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ text: "Account updated successfully!", type: "success" });
+        setIsEditing(false);
+      } else {
+        throw new Error(data.message || "Failed to update user");
+      }
+    } catch (err: any) {
+      setMessage({ text: err.message, type: "error" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex bg-white">
-
       {/* Main Content */}
       <div className="flex-1">
         <Navigation
@@ -113,130 +140,88 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
             <div className="text-gray-500">Loading account information...</div>
           ) : (
             <>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold">Personal Information</h2>
-                  <button
-                    onClick={() =>
-                      isEditing ? handleSave() : setIsEditing(true)
-                    }
-                    className="px-4 py-2 bg-[#d02c37] text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    {isEditing ? "Save Changes" : "Edit"}
-                  </button>
+              {/* ✅ Account Status */}
+              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <h2 className="text-xl font-bold mb-4">Account Status</h2>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                  <span className="text-green-700 font-medium">
+                    Active Affiliate
+                  </span>
                 </div>
+                <p className="text-gray-600 mt-2">
+                  Your account is active and approved for affiliate activities.
+                </p>
+              </div>
 
-                {/* Profile Image */}
-                <div className="flex flex-col items-center mb-6">
-                  <img
-                    src={formData.profileImage || profileImage}
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover mb-3 border"
-                  />
-                  {isEditing && (
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="text-sm text-gray-600"
+              {/* ✅ Personal Info Section */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex justify-between items-start mb-6 flex-col md:flex-row">
+                  <div>
+                    <h2 className="text-xl font-bold mb-2">
+                      Personal Information
+                    </h2>
+                  </div>
+
+                  {/* Profile Image + Edit Above Upload */}
+                  <div className="relative flex flex-col items-center md:items-end">
+                    <button
+                      onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                      disabled={saving}
+                      className={`top-3 right-0 px-3 py-1 rounded-md text-sm transition ${
+                        isEditing ? "bg-green-600 hover:bg-green-700" : "bg-[#d02c37] hover:bg-black"
+                      } text-white`}
+                    >
+                      {saving
+                        ? "Saving..."
+                        : isEditing
+                        ? "Save"
+                        : "Edit"}
+                    </button>
+
+                    <img
+                      src={formData.profileImage || profileImage}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover mb-2 border mt-4"
                     />
-                  )}
+
+                    {isEditing && (
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="text-sm text-gray-600"
+                      />
+                    )}
+                  </div>
                 </div>
 
                 {/* Form Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* First Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
+                  {[
+                    { label: "First Name", name: "firstName" },
+                    { label: "Last Name", name: "lastName" },
+                    { label: "Email", name: "email", type: "email" },
+                    { label: "Phone", name: "phone", type: "tel" },
+                    { label: "Business Name", name: "businessName" },
+                    { label: "ABN", name: "abn", placeholder: "12 345 678 901" },
+                  ].map((field) => (
+                    <div key={field.name}>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {field.label}
+                      </label>
+                      <input
+                        type={field.type || "text"}
+                        name={field.name}
+                        value={(formData as any)[field.name]}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                        placeholder={field.placeholder}
+                        className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
+                      />
+                    </div>
+                  ))}
 
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
-
-                  {/* Business Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Name
-                    </label>
-                    <input
-                      type="text"
-                      name="businessName"
-                      value={formData.businessName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
-
-                  {/* ABN */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ABN
-                    </label>
-                    <input
-                      type="text"
-                      name="abn"
-                      value={formData.abn}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      placeholder="12 345 678 901"
-                      className="w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-50"
-                    />
-                  </div>
-
-                  {/* Website */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Website
@@ -252,7 +237,6 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
                     />
                   </div>
 
-                  {/* Suburb */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Suburb
@@ -267,7 +251,6 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
                     />
                   </div>
 
-                  {/* State + Postcode */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -298,6 +281,16 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
                   </div>
                 </div>
 
+                {message.text && (
+                  <div
+                    className={`mt-4 text-sm font-medium ${
+                      message.type === "success" ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                )}
+
                 {isEditing && (
                   <div className="mt-6 pt-6 border-t">
                     <button
@@ -309,26 +302,11 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
                   </div>
                 )}
               </div>
-
-              {/* Account Status */}
-              <div className="bg-white rounded-lg shadow-sm p-8 mt-8">
-                <h2 className="text-xl font-bold mb-4">Account Status</h2>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                  <span className="text-green-700 font-medium">
-                    Active Affiliate
-                  </span>
-                </div>
-                <p className="text-gray-600 mt-2">
-                  Your account is active and approved for affiliate activities.
-                </p>
-              </div>
             </>
           )}
         </div>
       </div>
 
-      {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 lg:hidden"
