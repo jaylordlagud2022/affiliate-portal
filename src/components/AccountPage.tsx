@@ -101,7 +101,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
 
     try {
       const token = localStorage.getItem("authToken");
-      const res = await fetch("https://api.propertyinvestors.com.au/wp-json/hubspot-api/v1/update-user", {
+      const res = await fetch("https://affiliatehub.propertyinvestors.com.au/wp-json/affiliate/v1/update-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
