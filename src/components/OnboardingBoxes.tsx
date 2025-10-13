@@ -8,22 +8,22 @@ const OnboardingBoxes = () => {
   const [boxes] = useState([
     {
       title: "Dashboard",
-      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      video: "https://46099113.fs1.hubspotusercontent-na1.net/hubfs/46099113/onboarding/Dashboard%20Hub%201.mp4",
       icon: <LayoutDashboard className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
     },
     {
       title: "Marketing",
-      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      video: "https://46099113.fs1.hubspotusercontent-na1.net/hubfs/46099113/onboarding/Marketing%20Hub%201.mp4",
       icon: <Megaphone className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
     },
     {
       title: "Partner Status",
-      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      video: "https://46099113.fs1.hubspotusercontent-na1.net/hubfs/46099113/onboarding/Partner%20Status%20Hub%202.mp4",
       icon: <UserCheck className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
     },
     {
       title: "Account",
-      video: "https://www.youtube.com/embed/tgbNymZ7vqY",
+      video: "https://46099113.fs1.hubspotusercontent-na1.net/hubfs/46099113/onboarding/Account%20Hub%201.mp4",
       icon: <Settings className="w-[65px] h-[65px] text-[#d02c37] mb-2" />,
     },
   ]);
