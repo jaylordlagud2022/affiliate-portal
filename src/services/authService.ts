@@ -104,35 +104,75 @@ class AuthService extends BaseAPI {
     }
   }
 
- /** REGISTER new user */
-async register(data: Record<string, any>): Promise<ApiResponse<User>> {
-  try {
-    const response = await this.makeRequest(
-      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/register`, // 👈 your URL
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data), // send ALL fields
-      }
-    );
+  /** Register new user */
+  async register(data: Record<string, any>): Promise<ApiResponse<User>> {
+    try {
+      const response = await this.makeRequest(
+        `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        }
+      );
 
-    const result = await response.json();
-    console.log('Register result:', result);
+      const result = await response.json();
+      console.log('Register result:', result);
 
-    if (result.success && result.data) {
-      if (result.data.token) {
-        localStorage.setItem('authToken', result.data.token);
+      if (result.success && result.data) {
+        if (result.data.token) {
+          localStorage.setItem('authToken', result.data.token);
+        }
+        this.saveCurrentUser(result.data);
+        return { success: true, data: result.data };
       }
-      this.saveCurrentUser(result.data);
-      return { success: true, data: result.data };
+
+      return { success: false, error: result.message || 'Registration failed' };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: 'Network error' };
     }
-
-    return { success: false, error: result.message || 'Registration failed' };
-  } catch (err) {
-    console.error(err);
-    return { success: false, error: 'Network error' };
   }
-}
+
+  /** ✅ Update existing user (profile, business, etc.) */
+  async updateUser(data: Record<string, any>): Promise<ApiResponse<User>> {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        return { success: false, error: 'Missing authentication token' };
+      }
+
+      const response = await this.makeRequest(
+        `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/update-user`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, ...data }),
+        }
+      );
+
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch {
+        console.error('Invalid JSON response:', text);
+        return { success: false, error: 'Invalid server response' };
+      }
+
+      if (result.success) {
+        console.log('✅ User updated successfully:', result.data);
+        this.saveCurrentUser(result.data);
+        return { success: true, data: result.data };
+      }
+
+      console.warn('❌ Update failed:', result.message);
+      return { success: false, error: result.message || 'Update failed' };
+    } catch (err) {
+      console.error('Network error:', err);
+      return { success: false, error: 'Network error' };
+    }
+  }
 
   /** Storage helpers */
   logout(): void {

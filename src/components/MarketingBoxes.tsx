@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import EbookGallery from "./EbookGallery";
+import VideoGallery from "./VideoGallery";
 import {
   UserPlus,
   Info,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 
 const MarketingBoxes = () => {
-  const [activeView, setActiveView] = useState<"home" | "ebooks" | "media">("home");
+  const [activeView, setActiveView] = useState<"home" | "ebooks" | "media" | "videos">("home");
   const [showReferModal, setShowReferModal] = useState(false);
 
   const [boxes] = useState([
@@ -98,7 +99,7 @@ const MarketingBoxes = () => {
                 if (box.key === "ebooks") setActiveView("ebooks");
                 if (box.key === "media") setActiveView("media");
                 if (box.key === "about") {
-                  const pdfUrl = "/About Property Investors 2025.pdf"; // must be in public/
+                  const pdfUrl = "/About Property Investors 2025.pdf";
                   const link = document.createElement("a");
                   link.href = pdfUrl;
                   link.download = "Property-Investors.pdf";
@@ -129,23 +130,44 @@ const MarketingBoxes = () => {
           </button>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-            {mediaBoxes.map((box) => (
-              <div
-                key={box.key}
-                className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
-                onClick={() => {
-                  alert(`Clicked on ${box.title}`);
-                }}
-              >
-                {box.icon}
-                <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
-                  {box.title}
-                </span>
-                <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
-                  Open
-                </button>
-              </div>
-            ))}
+            {mediaBoxes.map((box) => {
+              const isDownload = ["success", "testimonials"].includes(box.key);
+              const buttonText = isDownload ? "Download" : "Open";
+
+              return (
+                <div
+                  key={box.key}
+                  className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
+                  onClick={() => {
+                    if (box.key === "success") {
+                      const pdfUrl = encodeURI("/Success Studies August 2025 Update.pdf");
+                      const link = document.createElement("a");
+                      link.href = pdfUrl;
+                      link.download = "Success-Studies-August-2025-Update.pdf";
+                      link.click();
+                    } else if (box.key === "testimonials") {
+                      const pdfUrl = encodeURI("/Investor persepctives - Authentic stories, proven success 4.pdf");
+                      const link = document.createElement("a");
+                      link.href = pdfUrl;
+                      link.download = "Investor-Perspectives-Authentic-Stories.pdf";
+                      link.click();
+                    } else if (box.key === "videos") {
+                      setActiveView("videos");
+                    } else {
+                      alert(`Clicked on ${box.title}`);
+                    }
+                  }}
+                >
+                  {box.icon}
+                  <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
+                    {box.title}
+                  </span>
+                  <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                    {buttonText}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -160,6 +182,19 @@ const MarketingBoxes = () => {
             ← Back
           </button>
           <EbookGallery />
+        </div>
+      )}
+
+      {/* Video Gallery */}
+      {activeView === "videos" && (
+        <div className="relative">
+          <button
+            onClick={() => setActiveView("media")}
+            className="mb-4 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+          >
+            ← Back
+          </button>
+          <VideoGallery />
         </div>
       )}
 

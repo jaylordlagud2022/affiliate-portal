@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navigation from "./Navigation";
 import profileImage from "../assets/profile-placeholder.png";
+import AuthService from "../services/authService";
 
 type PageType = "portal" | "marketing" | "dashboard" | "account" | "affiliate";
 
@@ -50,9 +51,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
       return;
     }
 
-    fetch(
-      `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`
-    )
+    fetch(`https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/user-info?token=${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data && data.data.hubspot) {
@@ -95,30 +94,49 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
     }
   };
 
+  // ✅ Updated handleSave using direct fetch (same as register style)
   const handleSave = async () => {
     setSaving(true);
     setMessage({ text: "", type: "" });
 
     try {
       const token = localStorage.getItem("authToken");
-      const res = await fetch("https://affiliatehub.propertyinvestors.com.au/wp-json/affiliate/v1/update-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          ...formData,
-        }),
-      });
+      if (!token) {
+        setMessage({ text: "No authentication token found.", type: "error" });
+        setSaving(false);
+        return;
+      }
 
-      const data = await res.json();
-      if (data.success) {
+      const response = await fetch(
+        "https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/update-user",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token,
+            ...formData,
+            abn: formData.abn.replace(/\s/g, ""), // Clean ABN like in register
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
         setMessage({ text: "Account updated successfully!", type: "success" });
         setIsEditing(false);
       } else {
-        throw new Error(data.message || "Failed to update user");
+        setMessage({
+          text: result?.message || result?.error || "Failed to update account.",
+          type: "error",
+        });
       }
-    } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+    } catch (err) {
+      console.error("❌ Update error:", err);
+      setMessage({
+        text: "Something went wrong. Please try again.",
+        type: "error",
+      });
     } finally {
       setSaving(false);
     }
