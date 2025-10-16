@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Award, Video } from "lucide-react";
 
 interface VideoFile {
   id: string;
@@ -14,7 +15,6 @@ interface Props {
 const VideoGallery: React.FC<Props> = ({ initialFolder }) => {
   const [videos, setVideos] = useState<VideoFile[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<VideoFile | null>(null);
   const [activeFolder, setActiveFolder] = useState<"videos" | "webinar" | null>(
     initialFolder || null
   );
@@ -52,7 +52,7 @@ const VideoGallery: React.FC<Props> = ({ initialFolder }) => {
     setVideos([]);
 
     if (folderId === "webinar") {
-      // Use static YouTube webinar list
+      // Load static webinar list
       setTimeout(() => {
         setVideos(webinarVideos);
         setLoading(false);
@@ -60,7 +60,7 @@ const VideoGallery: React.FC<Props> = ({ initialFolder }) => {
       return;
     }
 
-    // Otherwise, fetch from API for “Success Videos”
+    // Load from WordPress API
     fetch(
       `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/marketing-documents?folder_id=${folderId}`
     )
@@ -78,99 +78,83 @@ const VideoGallery: React.FC<Props> = ({ initialFolder }) => {
       .finally(() => setLoading(false));
   };
 
-  // Auto-load initial folder
   useEffect(() => {
     if (initialFolder) loadVideos(initialFolder);
   }, [initialFolder]);
 
   return (
     <div className="p-6">
-      {/* Buttons */}
-      <div className="flex flex-wrap justify-center gap-4 mb-8">
-        <button
-          onClick={() => loadVideos("videos")}
-          className={`px-6 py-3 rounded-lg text-white font-medium transition ${
-            activeFolder === "videos"
-              ? "bg-[#d02c37]"
-              : "bg-gray-400 hover:bg-[#d02c37]"
-          }`}
-        >
-          🎯 Success Videos
-        </button>
-        <button
-          onClick={() => loadVideos("webinar")}
-          className={`px-6 py-3 rounded-lg text-white font-medium transition ${
-            activeFolder === "webinar"
-              ? "bg-[#d02c37]"
-              : "bg-gray-400 hover:bg-[#d02c37]"
-          }`}
-        >
-          🎥 Webinar Videos
-        </button>
-      </div>
-
-      {/* Loading */}
-      {loading && <p className="text-center text-gray-600">Loading videos...</p>}
-
-      {/* Empty state */}
-      {!loading && activeFolder && videos.length === 0 && (
-        <p className="text-center text-gray-600">
-          No videos found in this category.
-        </p>
-      )}
-
-      {/* Video grid */}
-      {!loading && videos.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {videos.map((video) => (
+      {/* 📦 Folder Selector Boxes */}
+      {!activeFolder && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+          {[
+            {
+              id: "videos",
+              title: "Video Content",
+              icon: <Video className="w-10 h-10 text-[#d02c37]" />,
+              buttonLabel: "Open",
+            },
+            {
+              id: "webinar",
+              title: "Webinar Videos",
+              icon: <Award className="w-10 h-10 text-[#d02c37]" />,
+              buttonLabel: "Open",
+            },
+          ].map((box) => (
             <div
-              key={video.id}
-              className="cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-transform transform hover:scale-105 bg-white"
-              onClick={() => setSelectedVideo(video)}
+              key={box.id}
+              className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-sm flex flex-col items-center justify-center w-64 h-48 transition hover:shadow-md"
             >
-              <img
-                src={video.preview}
-                alt={video.name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-3 text-center font-medium text-sm truncate">
-                {video.name}
-              </div>
+              {box.icon}
+              <span className="text-lg font-medium text-center text-black mt-3">
+                {box.title}
+              </span>
+              <button
+                onClick={() => loadVideos(box.id as "videos" | "webinar")}
+                className="mt-3 px-5 py-2 rounded-md text-white font-medium bg-[#d02c37] hover:opacity-90"
+              >
+                {box.buttonLabel}
+              </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal player */}
-      {selectedVideo && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl relative p-4">
-            <button
-              onClick={() => setSelectedVideo(null)}
-              className="absolute top-3 right-3 text-gray-700 hover:text-black"
-            >
-              ✕
-            </button>
-            <h3 className="text-lg font-semibold mb-4 text-center">
-              {selectedVideo.name}
-            </h3>
+      {/* 🎥 Videos Display */}
+      {activeFolder && (
+        <div className="mt-8">
+          {loading && (
+            <p className="text-center text-gray-600">Loading videos...</p>
+          )}
 
-            {selectedVideo.url.includes("youtu") ? (
-              <iframe
-                src={selectedVideo.url.replace("watch?v=", "embed/")}
-                className="w-full h-[480px] rounded-lg"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              ></iframe>
-            ) : (
-              <video
-                src={selectedVideo.url}
-                controls
-                autoPlay
-                className="w-full rounded-lg"
-              />
-            )}
-          </div>
+          {!loading && videos.length === 0 && (
+            <p className="text-center text-gray-600">
+              No videos found in this category.
+            </p>
+          )}
+
+          {!loading && videos.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {videos.map((video) => (
+                <a
+                  key={video.id}
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-transform transform hover:scale-105 bg-white"
+                >
+                  <img
+                    src={video.preview}
+                    alt={video.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-3 text-center font-medium text-sm truncate">
+                    {video.name}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

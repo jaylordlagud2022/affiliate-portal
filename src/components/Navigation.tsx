@@ -25,20 +25,15 @@ const Navigation: React.FC<NavigationProps> = ({
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-
-        // HubSpot data is inside parsed.hubspot
         const hubspotData = parsed.hubspot || {};
-
-        // Build full name
         const fullName = [hubspotData.firstname, hubspotData.lastname]
-          .filter(Boolean) // remove null/undefined/empty
+          .filter(Boolean)
           .join(' ')
           .trim();
 
         if (fullName) {
           setUserName(fullName);
         } else if (parsed.email) {
-          // fallback: show email if no name
           setUserName(parsed.email);
         }
       } catch (e) {
@@ -50,15 +45,16 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white pt-6">
       <div className="font-maven w-[1235px] mx-auto px-1 py-4 flex items-center justify-between border-b border-black bg-white">
-        {/* Logo */}
+        {/* Logo (linked to propertyinvestors.com.au) */}
         <div className="flex items-center space-x-3">
-
-           <img
-             src={logo}
-             alt="Property Investors Logo"
-             className="h-[79px] w-auto object-contain " // keeps proportions
+          <a href="https://propertyinvestors.com.au/" target="_blank" rel="noopener noreferrer">
+            <img
+              src={logo}
+              alt="Property Investors Logo"
+              className="h-[79px] w-auto object-contain"
               style={{ marginLeft: "-36px" }}
-           />
+            />
+          </a>
         </div>
 
         {/* Right section */}

@@ -126,7 +126,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 p-8">
+        <div className="flex-1">
           {currentPage === "dashboard" && <DashboardBoxes />}
           {currentPage === "marketing" && <MarketingBoxes />}
           {currentPage === "portal" && <DashboardBoxes />}
