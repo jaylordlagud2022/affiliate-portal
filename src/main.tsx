@@ -1,11 +1,16 @@
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-
-// Remove dark mode class addition
-createRoot(document.getElementById("root")!).render(
-  <div style={{ width: "1235px", margin: "0 auto" }}>
+// Make layout responsive with a max width, not fixed width
+createRoot(document.getElementById('root')!).render(
+  <div
+    style={{
+      maxWidth: '1235px',
+      width: '100%',
+      margin: '0 auto',
+    }}
+  >
     <App />
   </div>
 );

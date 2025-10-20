@@ -25,9 +25,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [abnStatus, setAbnStatus] = useState<string>(""); // ✅ track status
+  const [abnStatus, setAbnStatus] = useState<string>("");
 
-  // Format ABN as 11 digits => "12 345 678 901"
   const formatABN = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
     return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, "$1 $2 $3 $4");
@@ -35,7 +34,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
   const handleABNChange = async (value: string) => {
     const abnDigits = value.replace(/\s/g, "");
-
     if (abnDigits.length === 11) {
       try {
         const res = await fetch(
@@ -45,7 +43,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
         if (res.ok && data?.entity_name) {
           if (data.status && data.status.toLowerCase() !== "active") {
-            // ❌ ABN exists but not active
             setFormErrors((prev) => ({
               ...prev,
               abn: `ABN is not active (Status: ${data.status})`,
@@ -59,7 +56,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             return;
           }
 
-          // ✅ Valid active ABN
           setFormData((prev) => ({
             ...prev,
             abn: value,
@@ -70,7 +66,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
           setFormErrors((prev) => ({ ...prev, abn: "" }));
           setAbnStatus("Active");
         } else {
-          // ❌ Invalid ABN
           setFormErrors((prev) => ({ ...prev, abn: "Invalid ABN" }));
           setFormData((prev) => ({ ...prev, abn: value, company: "" }));
           setAbnStatus("");
@@ -81,7 +76,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
         setAbnStatus("");
       }
     } else {
-      // Reset if not 11 digits yet
       setFormErrors((prev) => ({ ...prev, abn: "" }));
       setFormData((prev) => ({ ...prev, abn: value, company: "" }));
       setAbnStatus("");
@@ -98,20 +92,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
       return;
     }
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setFormErrors({
-      ...formErrors,
-      [name]: "",
-    });
+    setFormData({ ...formData, [name]: value });
+    setFormErrors({ ...formErrors, [name]: "" });
   };
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
     if (!formData.company) errors.company = "Company name is required";
-
     const abnDigits = formData.abn.replace(/\s/g, "");
     if (abnDigits.length !== 11) errors.abn = "ABN must be 11 digits";
     if (abnStatus && abnStatus.toLowerCase() !== "active") {
@@ -185,15 +172,15 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   };
 
   const inputClass = (name: string) =>
-    `w-full p-3 border rounded-lg focus:ring-2 focus:border-transparent ${
+    `w-full p-3 border rounded-lg text-sm sm:text-base focus:ring-2 focus:border-transparent ${
       formErrors[name]
         ? "border-red-500 focus:ring-red-500"
         : "border-gray-300 focus:ring-blue-500"
     }`;
 
   return (
-    <div className="min-h-screen flex flex-col items-center ">
-      <div className="max-w-md w-full bg-white">
+    <div className="min-h-screen flex flex-col items-center px-4 sm:px-6 py-8 bg-gray-50">
+      <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-xl shadow-sm">
         <div className="flex items-center mb-6">
           <button
             onClick={onBack}
@@ -204,19 +191,19 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
         </div>
 
         {formErrors.general && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
             {formErrors.general}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-sm">
             Registration successful! Redirecting...
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ABN first */}
+          {/* ABN */}
           <div>
             <input
               type="text"
@@ -232,7 +219,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             )}
           </div>
 
-          {/* Company (readonly after ABN lookup) */}
+          {/* Company */}
           <div>
             <input
               type="text"
@@ -249,8 +236,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             )}
           </div>
 
-          {/* First + Last Name */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Names */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <input
                 type="text"
@@ -313,8 +300,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             )}
           </div>
 
-          {/* Suburb / State / Postcode */}
-          <div className="grid grid-cols-3 gap-2">
+          {/* Address */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <input
                 type="text"
@@ -380,29 +367,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             <button
               type="submit"
               disabled={loading || success}
-              className="
-                bg-[#d02c37]
-                text-white
-                text-lg
-                border
-                rounded-md
-                transition-all duration-200
-                disabled:opacity-50
-                hover:bg-black
-                hover:text-white
-                hover:underline
-                px-10 py-6
-                min-w-[280px]
-              "
+              className="bg-[#d02c37] text-white text-base sm:text-lg rounded-md transition-all duration-200 disabled:opacity-50 hover:bg-black hover:text-white hover:underline px-8 py-4 sm:py-5 w-full sm:w-auto"
               style={{
                 fontFamily: '"Maven Pro", sans-serif',
                 borderColor: "#BF3C3D",
-                borderRadius: "5px",
               }}
             >
-              <span className="hover:font-normal block text-center">
-                {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
-              </span>
+              {loading ? "SUBMITTING..." : success ? "SUCCESS!" : "Partner with us"}
             </button>
           </div>
         </form>
