@@ -12,15 +12,18 @@ import {
   Video,
   User,
   PlayCircle,
+  Download,
 } from "lucide-react";
 
 const MarketingBoxes = () => {
   const [activeView, setActiveView] = useState<
-    "home" | "ebooks" | "media" | "videos" | "videogallery"
+    "home" | "ebooks" | "media" | "videos" | "videogallery" | "success"
   >("home");
-  const [activeFolder, setActiveFolder] = useState<"videos" | "webinar" | null>(
-    null
-  );
+
+  const [activeFolder, setActiveFolder] = useState<
+    "investors" | "webinar" | "success" | null
+  >(null);
+
   const [showReferModal, setShowReferModal] = useState(false);
 
   const [boxes] = useState([
@@ -119,15 +122,26 @@ const MarketingBoxes = () => {
     }
   }, [showReferModal]);
 
+  const BackButton = ({ onClick }: { onClick: () => void }) => (
+    <div className="flex justify-start mt-12">
+      <button
+        onClick={onClick}
+        className="bg-[#d02c37] text-white px-4 py-3 rounded hover:bg-black transition font-medium w-[200px]"
+      >
+        ← Back
+      </button>
+    </div>
+  );
+
   return (
     <div className="p-4">
-      {/* 🏠 Home View */}
+      {/* HOME */}
       {activeView === "home" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           {boxes.map((box) => (
             <div
               key={box.key}
-              className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
+              className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
               onClick={() => {
                 if (box.key === "refer") setShowReferModal(true);
                 if (box.key === "ebooks") setActiveView("ebooks");
@@ -152,38 +166,24 @@ const MarketingBoxes = () => {
         </div>
       )}
 
-      {/* 🎥 Media View */}
+      {/* MEDIA */}
       {activeView === "media" && (
         <div className="relative">
-          <button
-            onClick={() => setActiveView("home")}
-            className="mb-6 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-          >
-            ← Back
-          </button>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
             {mediaBoxes.map((box) => (
               <div
                 key={box.key}
-                className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
+                className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
                 onClick={() => {
-                  if (box.key === "success") {
-                    const link = document.createElement("a");
-                    link.href = "/Success Studies August 2025 Update.pdf";
-                    link.download =
-                      "Success-Studies-August-2025-Update.pdf";
-                    link.click();
-                  } else if (box.key === "testimonials") {
+                  if (box.key === "success") setActiveView("success");
+                  else if (box.key === "testimonials") {
                     const link = document.createElement("a");
                     link.href =
                       "/Investor persepctives - Authentic stories, proven success 4.pdf";
                     link.download =
                       "Investor-Perspectives-Authentic-Stories.pdf";
                     link.click();
-                  } else if (box.key === "videos") {
-                    setActiveView("videos");
-                  }
+                  } else if (box.key === "videos") setActiveView("videos");
                 }}
               >
                 {box.icon}
@@ -191,93 +191,121 @@ const MarketingBoxes = () => {
                   {box.title}
                 </span>
                 <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
-                  {["success", "testimonials"].includes(box.key)
-                    ? "Download"
-                    : "Open"}
+                  {box.key === "testimonials" ? "Download" : "Open"}
                 </button>
               </div>
             ))}
           </div>
+          <BackButton onClick={() => setActiveView("home")} />
         </div>
       )}
 
-      {/* ▶️ Video Category View */}
+      {/* VIDEO CONTENT SUBMENU */}
       {activeView === "videos" && (
         <div className="relative">
-          <button
-            onClick={() => setActiveView("media")}
-            className="mb-6 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-          >
-            ← Back
-          </button>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-            {[
-              {
-                key: "success-videos",
-                title: "Success Story Videos",
-                icon: (
-                  <PlayCircle className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
-                ),
-                folder: "videos",
-              },
-              {
-                key: "webinar-videos",
-                title: "Webinar Videos",
-                icon: (
-                  <PlayCircle className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
-                ),
-                folder: "webinar",
-              },
-            ].map((box) => (
-              <div
-                key={box.key}
-                className="bg-[#EFEFEF] border border-gray-200 rounded-xl shadow-md flex flex-col items-center justify-center w-full h-64 hover:shadow-lg transition cursor-pointer"
-                onClick={() => {
-                  setActiveFolder(box.folder as "videos" | "webinar");
-                  setActiveView("videogallery");
-                }}
-              >
-                {box.icon}
-                <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
-                  {box.title}
-                </span>
-                <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
-                  Open
-                </button>
-              </div>
-            ))}
+            {/* Investor Mistake */}
+            <div
+              className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center h-64 hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                setActiveFolder("investors");
+                setActiveView("videogallery");
+              }}
+            >
+              <PlayCircle className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
+              <span className="tracking-[-2.7px] text-[2em] font-medium mb-2 text-center">
+                Investor Mistake
+              </span>
+              <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                Open
+              </button>
+            </div>
+
+            {/* Webinar */}
+            <div
+              className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center h-64 hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                setActiveFolder("webinar");
+                setActiveView("videogallery");
+              }}
+            >
+              <PlayCircle className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
+              <span className="tracking-[-2.7px] text-[2em] font-medium mb-2 text-center">
+                Webinar
+              </span>
+              <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                Open
+              </button>
+            </div>
           </div>
+          <BackButton onClick={() => setActiveView("media")} />
         </div>
       )}
 
-      {/* 🎬 VideoGallery View */}
+      {/* SUCCESS STUDIES */}
+      {activeView === "success" && (
+        <div className="relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div
+              className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center h-64 hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                setActiveFolder("success");
+                setActiveView("videogallery");
+              }}
+            >
+              <Video className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
+              <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
+                Videos
+              </span>
+              <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                Open
+              </button>
+            </div>
+
+            <div
+              className="bg-[#EFEFEF] rounded-xl shadow-md flex flex-col items-center justify-center h-64 hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = "/Success Studies August 2025 Update.pdf";
+                link.download = "Success-Studies-August-2025-Update.pdf";
+                link.click();
+              }}
+            >
+              <Download className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
+              <span className="tracking-[-2.7px] text-[2em] font-medium text-center mb-2">
+                Download
+              </span>
+              <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
+                Download
+              </button>
+            </div>
+          </div>
+          <BackButton onClick={() => setActiveView("media")} />
+        </div>
+      )}
+
+      {/* VIDEO GALLERY */}
       {activeView === "videogallery" && activeFolder && (
         <div className="relative">
-          <button
-            onClick={() => setActiveView("videos")}
-            className="mb-6 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-          >
-            ← Back
-          </button>
-          <VideoGallery initialFolder={activeFolder} />
+          <VideoGallery selectedCategory={activeFolder} />
+          <BackButton
+            onClick={() => {
+              if (activeFolder === "success") setActiveView("success");
+              else setActiveView("videos");
+            }}
+          />
         </div>
       )}
 
-      {/* 📚 eBooks View */}
+      {/* EBOOKS */}
       {activeView === "ebooks" && (
         <div className="relative">
-          <button
-            onClick={() => setActiveView("home")}
-            className="mb-4 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-          >
-            ← Back
-          </button>
           <EbookGallery />
+          <BackButton onClick={() => setActiveView("home")} />
         </div>
       )}
 
-      {/* 📩 Refer a Client Modal */}
+      {/* REFER A CLIENT */}
       {showReferModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg max-w-2xl w-full relative">

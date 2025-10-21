@@ -27,7 +27,7 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
     <aside
       className={`
         side-bar-portal bg-white w-80 h-full shadow-md
-        ${isOpen ? 'z-30' : 'z-80'}
+        ${isOpen ? '' : 'z-80'}
         transform transition-transform duration-300 ease-in-out
         fixed top-0 left-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
