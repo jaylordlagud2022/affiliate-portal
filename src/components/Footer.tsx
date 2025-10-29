@@ -22,12 +22,24 @@ const Footer: React.FC = () => {
       >
         {/* Left side - Social icons */}
         <div className="flex items-center space-x-4 text-[#d02c37] mb-3 md:mb-0">
-          <FaXTwitter className="w-5 h-5 cursor-pointer hover:opacity-70" />
-          <Facebook className="w-5 h-5 cursor-pointer hover:opacity-70" />
-          <Linkedin className="w-5 h-5 cursor-pointer hover:opacity-70" />
-          <Youtube className="w-5 h-5 cursor-pointer hover:opacity-70" />
-          <Instagram className="w-5 h-5 cursor-pointer hover:opacity-70" />
-          <FaTiktok className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        <a href="https://twitter.com/prop_investors" target="_blank" rel="noopener noreferrer">
+            <FaXTwitter className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
+        <a href="https://www.facebook.com/propertyinvestorsteam" target="_blank" rel="noopener noreferrer">
+            <Facebook className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
+        <a href="https://www.linkedin.com/showcase/property-investors/" target="_blank" rel="noopener noreferrer">
+            <Linkedin className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
+        <a href="https://www.youtube.com/channel/UCGP-hdznfW221pfgumHnGOQ" target="_blank" rel="noopener noreferrer">
+            <Youtube className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
+        <a href="https://www.instagram.com/propertyinvestors.au/" target="_blank" rel="noopener noreferrer">
+            <Instagram className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
+        <a href="https://www.tiktok.com/@property_investors" target="_blank" rel="noopener noreferrer">
+            <FaTiktok className="w-5 h-5 cursor-pointer hover:opacity-70" />
+        </a>
         </div>
 
         {/* Right side - Links */}
