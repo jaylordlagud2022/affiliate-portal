@@ -82,6 +82,12 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ selectedCategory }) => {
       url: "https://www.youtube.com/watch?v=DzzU0K7vQ-w",
       preview: "https://img.youtube.com/vi/DzzU0K7vQ-w/hqdefault.jpg",
     },
+    {
+      id: "webinar-oct",
+      name: "October Webinar",
+      url: "https://www.youtube.com/watch?v=4Gj-cKLPYOk",
+      preview: "https://img.youtube.com/vi/4Gj-cKLPYOk/hqdefault.jpg",
+    },
   ];
 
   // ✅ Success Stories (added your 7 YouTube links)
