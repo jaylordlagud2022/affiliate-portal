@@ -22,7 +22,7 @@ const Marketing: React.FC<MarketingProps> = ({ onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col">
+    <div className="bg-white font-sans flex flex-col">
       {/* 🔴 Red Banner */}
 
       <div className="bg-[#d02c37] text-white text-center h-[195px] mt-5 mb-5 w-full flex items-center justify-center">

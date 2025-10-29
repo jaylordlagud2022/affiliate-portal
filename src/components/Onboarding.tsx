@@ -32,7 +32,7 @@ const Onboarding: React.FC<DashboardProps> = ({ onLogout }) => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="flex bg-white">
       {/* ✅ Sidebar (desktop: always visible, mobile: toggle) */}
       <div className="hidden w-64 border-r">
         <AffiliatePortalSidebar
@@ -68,7 +68,7 @@ const Onboarding: React.FC<DashboardProps> = ({ onLogout }) => {
         {currentPage === 'portal' && <Portal />}
         {currentPage === 'marketing' && <Marketing />}
         {currentPage === 'dashboard' && <DashboardContent />}
-        {currentPage === 'account' && <AccountPage />}
+        {currentPage === 'account' && <AccountPage />}  
         {currentPage === 'affiliate' && <div>Affiliate Content</div>}
       </div>
 

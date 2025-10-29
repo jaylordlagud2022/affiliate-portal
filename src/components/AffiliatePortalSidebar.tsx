@@ -16,17 +16,17 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
   isOpen,
 }) => {
   const menuItems: { id: PageType; label: string }[] = [
-    { id: 'portal', label: 'Dashboard Hub' },
-    { id: 'marketing', label: 'Marketing Hub' },
-    { id: 'affiliateActivity', label: 'Partner Status Hub' },
+    { id: 'portal', label: 'Dashboard hub' },
+    { id: 'marketing', label: 'Marketing hub' },
+    { id: 'affiliateActivity', label: 'Partner status hub' },
     { id: 'onboarding', label: 'Onboarding' },    
-    { id: 'account', label: 'Account Hub' },
+    { id: 'account', label: 'Account hub' },
   ];
 
   return (
     <aside
       className={`
-        side-bar-portal bg-white w-80 h-full shadow-md
+        side-bar-portal bg-white w-80
         ${isOpen ? '' : 'z-80'}
         transform transition-transform duration-300 ease-in-out
         fixed top-0 left-0
@@ -34,6 +34,7 @@ const AffiliatePortalSidebar: React.FC<AffiliatePortalSidebarProps> = ({
         lg:translate-x-0 lg:relative lg:block
       `}
     >
+
       {/* Sidebar nav */}
       <nav className="mt-5 p-4 space-y-2 pb-14">
         {menuItems.map((item) => (

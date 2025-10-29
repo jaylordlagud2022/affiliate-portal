@@ -75,7 +75,7 @@ const AffiliateActivity: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-sans">
+    <div className="bg-gray-50 p-8 font-sans">
       <div className="">
         <div className="grid grid-cols-1 gap-8">
           <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-200">

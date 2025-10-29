@@ -140,7 +140,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="flex bg-white">
       <div className="flex-1">
         <Navigation
           currentPage={currentPage}

@@ -52,7 +52,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-maven flex flex-col " style={{marginTop:"70px"}}>
+    <div className="bg-white font-maven flex flex-col " style={{marginTop:"70px"}}>
       {/* 🔴 Banner */}
       <hr className="w-full mx-auto border-black " />
 

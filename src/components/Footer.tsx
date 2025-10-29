@@ -10,6 +10,7 @@ const Footer: React.FC = () => {
         py-4 flex justify-center relative z-[9999]
       "
     >
+
       {/* Inner container — matches Navigation width */}
       <div
         className="
@@ -30,7 +31,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Right side - Links */}
-        <div className="flex flex-wrap items-center space-x-4 text-gray-800 font-semibold">
+        <div className="flex flex-wrap items-center space-x-4 text-gray-800 font-semibold" style={{ fontFamily: "Verdana, sans-serif" }}>
           <a href="#" className="hover:underline">
             Corporate profile.
           </a>

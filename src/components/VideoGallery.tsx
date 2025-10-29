@@ -56,7 +56,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ selectedCategory }) => {
     preview: `https://img.youtube.com/vi/${v.url.split("v=")[1]?.split("&")[0]}/hqdefault.jpg`,
   }));
 
-  // ✅ Webinar videos (restored all 4)
+  // ✅ Webinar videos
   const webinarVideos: VideoFile[] = [
     {
       id: "webinar-apr",
@@ -84,17 +84,21 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ selectedCategory }) => {
     },
   ];
 
-  // ✅ Success Stories
+  // ✅ Success Stories (added your 7 YouTube links)
   const successVideos: VideoFile[] = [
-    {
-      id: "success-1",
-      name: "Success Story 1",
-      url: "https://www.youtube.com/watch?v=DzzU0K7vQ-w",
-      preview: "https://img.youtube.com/vi/DzzU0K7vQ-w/hqdefault.jpg",
-    },
-  ];
+    { id: "success-1", name: "Success Story 1", url: "https://www.youtube.com/watch?v=Is3ncWZ_zRs" },
+    { id: "success-2", name: "Success Story 2", url: "https://www.youtube.com/watch?v=L9-kSxHAjMQ" },
+    { id: "success-3", name: "Success Story 3", url: "https://www.youtube.com/watch?v=PwL_V66Meiw" },
+    { id: "success-4", name: "Success Story 4", url: "https://www.youtube.com/watch?v=L7nVxrf5Sw0" },
+    { id: "success-5", name: "Success Story 5", url: "https://www.youtube.com/watch?v=yaG8YM2mn6s" },
+    { id: "success-6", name: "Success Story 6", url: "https://www.youtube.com/watch?v=nuO78Mh1X_c" },
+    { id: "success-7", name: "Success Story 7", url: "https://www.youtube.com/watch?v=gZdWyaWa800" },
+  ].map((v) => ({
+    ...v,
+    preview: `https://img.youtube.com/vi/${v.url.split("v=")[1]?.split("&")[0]}/hqdefault.jpg`,
+  }));
 
-  // ✅ Filter videos based on selected category
+  // ✅ Filter videos by category
   useEffect(() => {
     setLoading(true);
     let selectedVideos: VideoFile[] = [];

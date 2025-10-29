@@ -59,11 +59,11 @@ const AffiliateActivity: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div className="min-h-screen font-sans bg-white">
+      <div className="font-sans bg-white">
         <div className="max-w-7xl mx-auto">
           {/* Status Reward */}
           <h3 className="text-2xl font-bold text-gray-700 mb-6 pb-3">
-            Status Reward
+            Status Rewards
           </h3>
 
           {/* Progress bar with houses + rewards */}

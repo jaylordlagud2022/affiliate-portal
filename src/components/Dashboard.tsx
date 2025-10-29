@@ -40,7 +40,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="flex flex-col bg-white">
       {/* ✅ Main layout (sidebar + content) */}
       <div className="flex flex-1">
         {/* Sidebar */}
@@ -95,6 +95,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       </div>
 
       {/* ✅ Footer */}
+     <hr className="w-[100%] mx-auto border-black"></hr>
       <Footer />
     </div>
   );

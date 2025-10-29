@@ -214,7 +214,7 @@ const MarketingBoxes = () => {
             >
               <PlayCircle className="w-[65px] h-[65px] text-[#d02c37] mb-2" />
               <span className="tracking-[-2.7px] text-[2em] font-medium mb-2 text-center">
-                Investor Mistake
+                Investor Mistakes
               </span>
               <button className="bg-[#d02c37] text-white px-4 py-2 rounded-md hover:bg-black transition w-[200px]">
                 Open
