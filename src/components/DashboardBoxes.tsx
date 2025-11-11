@@ -30,12 +30,12 @@ const DashboardBoxes = () => {
       setLoading(true);
       try {
         const leadsRes = await fetch(
-          `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-leads?token=${token}`
+          `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/associated-contacts?token=${token}`
         );
         const leadsData = await leadsRes.json();
 
         const pipelineRes = await fetch(
-          `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/widget-1-pipeline?token=${token}`
+          `https://api.propertyinvestors.com.au/wp-json/hubspot-login/v1/associated-deals?token=${token}`
         );
         const pipelineData = await pipelineRes.json();
 
